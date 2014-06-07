@@ -15,6 +15,4 @@ Project->GWorkflow->Java Resources->application-context.xml/hibernate.cgf.xml/hi
 
 No need to create tables, messing time with databases.
 
-
-
-![Alt text](http://full/path/to/img.jpg "Optional title")
+[[Screen Shot 2014-04-14 at 9.31.07 PM.png]]
