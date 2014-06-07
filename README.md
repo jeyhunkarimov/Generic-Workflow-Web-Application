@@ -17,3 +17,4 @@ No need to create tables, messing time with databases.
 
 
 
+![Alt text](http://full/path/to/img.jpg "Optional title")
