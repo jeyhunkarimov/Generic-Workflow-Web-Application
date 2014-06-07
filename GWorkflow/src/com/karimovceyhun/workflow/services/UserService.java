@@ -72,13 +72,13 @@ public class UserService extends Service implements IUserService,Serializable
 	{
 		List users = getHibernateTemplate().find("select e from User e where e.email = ?", new Object[]{email});
 		User targetEmployee = (User) users.get(0);
-		//MailSenderService.getInstance().send(targetEmployee.getEmail(), "Your password is " +  targetEmployee.getPassword() , "Mobicom Workorder Password", "noreply@mobicom.it");
+		//MailSenderService.getInstance().send(targetEmployee.getEmail(), "Your password is " +  targetEmployee.getPassword() , "GWorkflow Password", "noreply@GWorkflow.com");
 		IMailSenderService mss = (IMailSenderService) ServiceFinder.findBean("MailSenderService");
-		mss.send(targetEmployee.getEmail(), "Your password is " +  targetEmployee.getPassword() , "Mobicom Workorder Password", "noreply@mobicom.it");
+		mss.send(targetEmployee.getEmail(), "Your password is " +  targetEmployee.getPassword() , "GWorkflow Password", "noreply@GWorkflow.com");
 		/*SimpleMailMessage message = new SimpleMailMessage();
 		message.setTo(targetEmployee.getEmail());
 		message.setText("Your password is " +  targetEmployee.getPassword());
-		message.setSubject("Mobicom Workorder Password");
+		message.setSubject("GWorkflow Password");
 		message.setFrom(getUsername());
 		sender.send(message);
 		*/

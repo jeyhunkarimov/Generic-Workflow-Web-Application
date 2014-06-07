@@ -25,7 +25,7 @@ http://www.springframework.org/schema/context http://www.springframework.org/sch
 		<property name="protocol">
 			<value>smtp</value>
 		</property>
-		<property name="username" value="noreplymobicom@gmail.com" />
+		<property name="username" value="noreply@GWorkflow.com" />
 		<property name="password" value="mbcm3723it" />
 		<property name="javaMailProperties">
 			<props>

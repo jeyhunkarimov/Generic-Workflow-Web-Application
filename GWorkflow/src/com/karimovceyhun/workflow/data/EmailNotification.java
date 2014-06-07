@@ -17,7 +17,7 @@ public class EmailNotification implements Bean,Serializable{
 	 */
 	private static final long serialVersionUID = 7483734325348712174L;
 
-	public static String SENDER_MAIL = "noreply@mobicom.it";
+	public static String SENDER_MAIL = "noreply@GWorkflow.com";
 	public static String STATUS_SUBJECT = "Status changed";
 	
 	private static int PROCESS = 1;
