@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+
+
+
+<h:head>
+	<title>WorkOrder Application</title>
+</h:head>
+
+<h:body>
+	<h:outputStylesheet library="css" name="style.css"  />
+	<ui:include src="/pages/common/menu.xhtml" />
+
+	<h2>Work Order Project Listing</h2>
+
+	<br/>
+	<h:form id="listForm">
+		<br />
+		<br />	
+		<p:commandButton accesskey="n" icon="ui-icon-copy" 
+			value="Add New Project" 
+			action="#{projectListingManagedBean.initializeNewProjectUsersPicklist}"
+			ajax="true"
+			update=":editorForm"
+			oncomplete="editorDialog.show()"
+			rendered="#{projectListingManagedBean.isAdmin}">
+		</p:commandButton>
+	
+		<p:dataTable var="item" value="#{projectListingManagedBean.projects}"
+			paginator="true" rows="10" lazy="true"
+			paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+			rowsPerPageTemplate="5,10,15" >
+
+			<f:facet name="header">
+				<h:outputText value="Project List" />
+			</f:facet>
+
+			<p:column sortBy="#{item.id}">
+				<f:facet name="header">
+					<h:outputText value="Id" />
+				</f:facet>
+				<h:outputText value="#{item.id}"></h:outputText>
+			</p:column>
+
+			<p:column sortBy="#{item.name}">
+				<f:facet name="header">
+					<h:outputText value="Name" />
+				</f:facet>
+				<h:outputText value="#{item.name}"></h:outputText>
+			</p:column>
+			
+			<p:column style="width:300px">
+					<f:facet name="header">
+						<h:column>
+							<h:outputText value="Action"></h:outputText>
+						</h:column>
+					</f:facet>
+					<h:panelGrid columns="2">
+						<p:commandLink title="Edit" 
+							action="#{projectListingManagedBean.edit}"
+							ajax="true"
+							update=":editorForm"
+							oncomplete="editorDialog.show()"
+							rendered="#{projectListingManagedBean.isAdmin or item.manager.id == projectListingManagedBean.currentUser.id}">					
+							<f:param name="id" value="#{item.id}" />
+							<h:graphicImage value="../images/icons/application_edit.png" />
+						</p:commandLink>
+	
+						<p:commandLink 
+							title="Delete"
+							ajax="true"
+							oncomplete="confirmation.show()"
+							actionListener="#{projectListingManagedBean.beanInitBeforeDelete}">
+							<f:param name="id" value="#{item.id}" />
+							<h:graphicImage value="../images/icons/application_delete.png" />
+						</p:commandLink>
+					</h:panelGrid>
+				</p:column>
+	
+
+
+		</p:dataTable>
+	</h:form>
+
+	<h:form id="editorForm" styleClass="editor">
+		<p:dialog widgetVar="editorDialog" draggable="true" modal="true" closable="true" resizable="false" header="Project Editor">
+			<h:panelGrid columns="2">
+				<p:fieldset legend="Project Information" toggleable="true">
+	
+					<h:panelGrid columns="2">		
+						<h:outputText value="* Project Name"></h:outputText>
+						<h:inputText value="#{projectListingManagedBean.bean.name}"
+							required="true" requiredMessage="Full Name is Required">
+						</h:inputText>
+						
+						<h:outputText value="* Project Manager"></h:outputText>
+						<p:autoComplete dropdown="true" value="#{projectListingManagedBean.bean.manager}" completeMethod="#{projectListingManagedBean.completeUser}"
+					        var="e" itemLabel="#{e.fullName}" itemValue="#{e}" converter="userConverter">
+						</p:autoComplete>
+						
+						<h:outputText value="* Users"/>
+						<p:pickList id="pickList" value="#{projectListingManagedBean.users}"  
+               				 var="users"  converter="userConverter"
+               				 itemLabel="#{users.fullName}"  
+              				 itemValue="#{users}" />  
+					</h:panelGrid>
+				</p:fieldset>
+
+			</h:panelGrid>
+			<h:panelGroup>
+				<h:commandButton action="#{projectListingManagedBean.save}"
+					value="Save" accesskey="s">
+				</h:commandButton>
+				<h:commandButton action="#{projectListingManagedBean.cancel}"
+					value="Cancel" accesskey="c" immediate="true">
+				</h:commandButton>
+			</h:panelGroup>
+		</p:dialog>
+	
+	</h:form>
+	
+	
+	
+	<h:form id="confirmationForm">
+	 	<p:confirmDialog id="confirmDialog" 
+	 		message="Are you sure to delete?" 
+	 		header="Initiating delete process" 
+	 		severity="alert" 
+	 		widgetVar="confirmation">    
+	        	<p:commandButton id="confirm" 
+	        		value="Yes" 
+	        		action="#{projectListingManagedBean.delete}"
+	        		oncomplete="confirmation.hide()"
+	        		update=":listForm"
+	        		/>  
+	        	<p:commandButton id="decline" 
+	        		value="No" 
+	        		onclick="confirmation.hide()" 
+	        		type="button" />   
+	    </p:confirmDialog>  
+	</h:form>
+
+</h:body>
+</html>

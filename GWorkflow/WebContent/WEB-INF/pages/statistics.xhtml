@@ -1,0 +1,261 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:f="http://java.sun.com/jsf/core"      
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">	
+ 
+    <h:head>
+        <title>WorkOrder Application</title>
+    </h:head>
+<h:body>
+	<h:outputStylesheet library="css" name="style.css"  />
+    	<ui:include src="/pages/common/menu.xhtml" />
+    	<h3>Work Order</h3>
+    		
+  <h:form id="sForm">
+  	<p:tabView id="tabView" dynamic="true">  
+  		<p:ajax event="tabChange" listener="#{statisticsManagedBean.onTabChange}"/>
+  		<p:tab title="Query Statistics" id="numberStatisticsTab">  
+  			<p:tabView id="taskStatisticsTab" dynamic="true">
+  				<p:tab title="Task Statistics">
+  					<p:panel header="Choose Criterias for Statistics">
+		  				<h:panelGrid columns="3" cellspacing="15" >
+			  				<p:inplace id="usersInp" label="Select User" effectSpeed="fast">  
+				                <p:selectOneMenu id="usersMenu" value="#{statisticsManagedBean.queryResults['User']}" converter="userConverter">
+				                	<f:selectItem itemLabel="Any User" itemValue=""></f:selectItem>
+				                  	<f:selectItems value="#{statisticsManagedBean.queryLists.get('User')}" var="user" itemLabel="#{user.fullName}" itemValue="#{user}"></f:selectItems>   
+				                </p:selectOneMenu>  
+			            	</p:inplace> 
+			            	<p:inplace  label="Select Project" effectSpeed="fast">
+			            		<p:selectOneMenu id="projectsMenu1" value="#{statisticsManagedBean.queryResults['Project']}" converter="projectConverter">
+				                	<f:selectItem itemLabel="Any Project" itemValue=""></f:selectItem>
+				                  	<f:selectItems value="#{statisticsManagedBean.queryLists.get('Project')}" var="project" itemLabel="#{project.name}" itemValue="#{project}"></f:selectItems>   
+				                </p:selectOneMenu>  
+			            	</p:inplace>
+			            	<p:inplace  label="Select Workflow" effectSpeed="fast">
+			            		<p:selectOneMenu id="workflowsMenu2" value="#{statisticsManagedBean.queryResults['Workflow']}" converter="workFlowConverter" onchange="">
+				                	<f:selectItem itemLabel="Any Workflow" itemValue=""></f:selectItem>
+				                  	<f:selectItems value="#{statisticsManagedBean.queryLists.get('Workflow')}" var="workflow" itemLabel="#{workflow.name}" itemValue="#{workflow}"></f:selectItems>   
+				                </p:selectOneMenu>  
+			            	</p:inplace>
+		            	</h:panelGrid>
+		            	<p:commandButton value="Search" ajax="true" update=":sForm:tabView:taskStatisticsTab:taskTimeDT,:sForm:tabView:taskStatisticsTab:taskDelayDT" action="#{statisticsManagedBean.taskStatisticsResults}"></p:commandButton>
+		           		  <h:panelGrid columnClasses="columnTask" width="100%" columns="2">
+
+		            		<p:dataTable var="item" value="#{statisticsManagedBean.taskTimeKeyList}" id="taskTimeDT">
+		            			<f:facet name="header">
+									<h:outputText value="Completed Task Statistics" />
+								</f:facet>
+								<p:column >
+									<f:facet name="header">
+										<h:outputText value="Field" />
+									</f:facet>
+									<h:outputText value="#{item}"/>
+								</p:column>
+								<p:column >
+									<f:facet name="header">
+										<h:outputText value="Value" />
+									</f:facet>
+									<h:outputText value="#{statisticsManagedBean.taskTimeStatistics.get(item)}"/>
+								</p:column>
+		            		</p:dataTable>
+		            		
+		            		<p:dataTable var="item" value="#{statisticsManagedBean.taskDelayKeyList}" id="taskDelayDT">
+		            			<f:facet name="header">
+									<h:outputText value="Delayed Task Statistics" />
+								</f:facet>
+								<p:column >
+									<f:facet name="header">
+										<h:outputText value="Field" />
+									</f:facet>
+									<h:outputText value="#{item}"/>
+								</p:column>
+								<p:column >
+									<f:facet name="header">
+										<h:outputText value="Value" />
+									</f:facet>
+									<h:outputText value="#{statisticsManagedBean.taskDelayStatistics.get(item)}"/>
+								</p:column>
+		            		</p:dataTable>
+		            	</h:panelGrid>
+  					</p:panel>
+  					            
+  					
+  				</p:tab>  
+  				<p:tab title="WorkOrder Statistics" id="woStatisticsTab">
+  					<p:panel header="Choose Criterias for Statistics">
+		  				<h:panelGrid columns="2" cellspacing="15" >
+			            	<p:inplace  label="Select Project" effectSpeed="fast">
+			            		<p:selectOneMenu id="projectsMenu2" value="#{statisticsManagedBean.queryResults['Project']}" converter="projectConverter">
+				                	<f:selectItem itemLabel="Any Project" itemValue=""></f:selectItem>
+				                  	<f:selectItems value="#{statisticsManagedBean.queryLists.get('Project')}" var="project" itemLabel="#{project.name}" itemValue="#{project}"></f:selectItems>   
+				                </p:selectOneMenu>  
+			            	</p:inplace>
+			            	<p:inplace  label="Select Workflow" effectSpeed="fast">
+			            		<p:selectOneMenu id="workflowsMenu1" value="#{statisticsManagedBean.queryResults['Workflow']}" converter="workFlowConverter" onchange="">
+				                	<f:selectItem itemLabel="Any Workflow" itemValue=""></f:selectItem>
+				                  	<f:selectItems value="#{statisticsManagedBean.queryLists.get('Workflow')}" var="workflow" itemLabel="#{workflow.name}" itemValue="#{workflow}"></f:selectItems>   
+				                </p:selectOneMenu>  
+			            	</p:inplace>
+		            	</h:panelGrid>
+		            	<p:commandButton value="Search" ajax="true" update=":sForm:tabView:taskStatisticsTab:woTimeDT,:sForm:tabView:taskStatisticsTab:woDelayDT" action="#{statisticsManagedBean.woStatisticsResults}"></p:commandButton>
+		            	
+		            	<h:panelGrid columnClasses="columnTask" width="100%" columns="2">
+
+		            		<p:dataTable var="item" value="#{statisticsManagedBean.workOrderTimeKeyList}" id="woTimeDT">
+		            			<f:facet name="header">
+									<h:outputText value="Completed WorkOrder Statistics" />
+								</f:facet>
+								<p:column >
+									<f:facet name="header">
+										<h:outputText value="Field" />
+									</f:facet>
+									<h:outputText value="#{item}"/>
+								</p:column>
+								<p:column >
+									<f:facet name="header">
+										<h:outputText value="Value" />
+									</f:facet>
+									<h:outputText value="#{statisticsManagedBean.workOrderTimeStatistics.get(item)}"/>
+								</p:column>
+		            		</p:dataTable>
+		            		
+		            		<p:dataTable var="item" value="#{statisticsManagedBean.workOrderDelayKeyList}" id="woDelayDT">
+		            			<f:facet name="header">
+									<h:outputText value="Delayed WorkOrder Statistics" />
+								</f:facet>
+								<p:column >
+									<f:facet name="header">
+										<h:outputText value="Field" />
+									</f:facet>
+									<h:outputText value="#{item}"/>
+								</p:column>
+								<p:column >
+									<f:facet name="header">
+										<h:outputText value="Value" />
+									</f:facet>
+									<h:outputText value="#{statisticsManagedBean.workOrderDelayStatistics.get(item)}"/>
+								</p:column>
+		            		</p:dataTable>
+		            	</h:panelGrid>
+  					</p:panel>
+  				</p:tab>
+  			</p:tabView>
+  			
+           	<h:panelGrid columns="2" cellpadding="10">  
+                
+            </h:panelGrid>  
+        </p:tab>  
+        <p:tab title="Graph Statistics" id="graphStatisticsTab">  
+            <h:panelGrid columns="2" cellpadding="10">  
+                
+            </h:panelGrid>  
+        </p:tab>  
+        <p:tab title="General Statistics" id="generalStatisticsTab">  
+       	 <p:tabView dynamic="true">
+  				<p:tab title="General Task Statistics">
+		            <p:panel header="General Statistics">       	
+		            	<h:panelGrid columnClasses="columnTask" width="100%" columns="2">
+		            		<p:dataTable var="item" value="#{statisticsManagedBean.taskByStatusKeyList}" id="taskByStatusDT">
+		            			<f:facet name="header">
+									<h:outputText value="Task By Status Statistics" />
+								</f:facet>
+								<p:column >
+									<f:facet name="header">
+										<h:outputText value="Status" />
+									</f:facet>
+									<h:outputText value="#{item}"/>
+								</p:column>
+								<p:column >
+									<f:facet name="header">
+										<h:outputText value="Number" />
+									</f:facet>
+									<h:outputText value="#{statisticsManagedBean.taskByStatusStatistics.get(item)}"/>
+								</p:column>
+		            		</p:dataTable>
+		            		<p:dataTable var="item" value="#{statisticsManagedBean.taskByWorkflowKeyList}" id="taskByWorkflowDT">
+		            			<f:facet name="header">
+									<h:outputText value="Task By Workflow Statistics" />
+								</f:facet>
+								<p:column >
+									<f:facet name="header">
+										<h:outputText value="Workflow Name" />
+									</f:facet>
+									<h:outputText value="#{item}"/>
+								</p:column>
+								<p:column >
+									<f:facet name="header">
+										<h:outputText value="Opened Task" />
+									</f:facet>
+									<h:outputText value="#{statisticsManagedBean.taskByWorkflowStatistics.get(item).get(0)}"/>
+								</p:column>
+								<p:column >
+									<f:facet name="header">
+										<h:outputText value="Completed Task" />
+									</f:facet>
+									<h:outputText value="#{statisticsManagedBean.taskByWorkflowStatistics.get(item).get(1)}"/>
+								</p:column>
+  
+		            		</p:dataTable>
+		            	</h:panelGrid>
+		  		   </p:panel>
+		  		</p:tab>
+		  		<p:tab title="General WorkOrder Statistics">
+		            <p:panel header="General Statistics">       	
+		            	<h:panelGrid columnClasses="columnTask" width="100%" columns="2">
+		            		<p:dataTable var="item" value="#{statisticsManagedBean.workOrderByStatusKeyList}" id="woByStatusDT">
+		            			<f:facet name="header">
+									<h:outputText value="WorkOrder By Status Statistics" />
+								</f:facet>
+								<p:column >
+									<f:facet name="header">
+										<h:outputText value="Status" />
+									</f:facet>
+									<h:outputText value="#{item}"/>
+								</p:column>
+								<p:column >
+									<f:facet name="header">
+										<h:outputText value="Number" />
+									</f:facet>
+									<h:outputText value="#{statisticsManagedBean.workOrderByStatusStatistics.get(item)}"/>
+								</p:column>
+		            		</p:dataTable>
+							<p:dataTable var="item" value="#{statisticsManagedBean.workOrderByWorkflowKeyList}" id="woByWorkflowDT">
+		            			<f:facet name="header">
+									<h:outputText value="WorkOrder By Workflow Statistics" />
+								</f:facet>
+								<p:column >
+									<f:facet name="header">
+										<h:outputText value="Workflow Name" />
+									</f:facet>
+									<h:outputText value="#{item}"/>
+								</p:column>
+								<p:column >
+									<f:facet name="header">
+										<h:outputText value="Opened WorkOrder" />
+									</f:facet>
+									<h:outputText value="#{statisticsManagedBean.workOrderByWorkflowStatistics.get(item).get(0)}"/>
+								</p:column>
+								<p:column >
+									<f:facet name="header">
+										<h:outputText value="Completed WorkOrder" />
+									</f:facet>
+									<h:outputText value="#{statisticsManagedBean.workOrderByWorkflowStatistics.get(item).get(1)}"/>
+								</p:column>
+  
+		            		</p:dataTable>
+		            	</h:panelGrid>
+		  		   </p:panel>
+		  		</p:tab>
+		  </p:tabView>
+
+       </p:tab>  
+  	</p:tabView> 
+
+  </h:form>
+</h:body>
+</html>

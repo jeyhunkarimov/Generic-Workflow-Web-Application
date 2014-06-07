@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+
+
+
+<h:head>
+	<title>WorkOrder Application</title>
+</h:head>
+
+<h:body>
+	<h:outputStylesheet library="css" name="style.css"  />
+	<ui:include src="/pages/common/menu.xhtml" />
+
+	<h2>Work Order Monitoring Page Selection</h2>
+
+	<br/>
+	<h:form id="listForm">
+		<br />
+		<br />	
+	
+		<p:dataTable var="item" value="#{monitoringPageSelectionManagedBean.customWoList}"
+			paginator="true" rows="10" lazy="true"
+			paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+			rowsPerPageTemplate="5,10,15">
+
+			<f:facet name="header">
+				<h:outputText value="Project List" />
+			</f:facet>
+
+			<p:column sortBy="#{item.wo.id}">
+				<f:facet name="header">
+					<h:outputText value="Id" />
+				</f:facet>
+				<h:outputText value="#{item.wo.id}"></h:outputText>
+			</p:column>
+			
+			<p:column sortBy="#{item.wo.summary}">
+				<f:facet name="header">
+					<h:outputText value="Summary" />
+				</f:facet>
+				<h:outputText value="#{item.wo.summary}"></h:outputText>
+			</p:column>
+
+			
+			<p:column >
+				<f:facet name="header">
+					<h:outputText value="Action" />
+				</f:facet>
+				<p:commandLink rendered="#{not item.isMonitoring}" title="Add to Monitoring" action="#{monitoringPageSelectionManagedBean.addToMonitoringList}" oncomplete="window.location.reload()">
+					<f:param name="woId" value="#{item.wo.id}"></f:param>
+					<h:graphicImage value="../images/icons/monitor.png" />
+				</p:commandLink>
+				<p:commandLink rendered="#{item.isMonitoring}" title="Remove from Monitoring" action="#{monitoringPageSelectionManagedBean.removeFromMonitoringList}" oncomplete="window.location.reload()">
+					<f:param name="woId" value="#{item.wo.id}"></f:param>
+					<h:graphicImage value="../images/icons/lock.png" />
+				</p:commandLink>
+			</p:column>
+
+		</p:dataTable>
+	</h:form>
+
+
+	
+	
+	
+	
+
+</h:body>
+</html>

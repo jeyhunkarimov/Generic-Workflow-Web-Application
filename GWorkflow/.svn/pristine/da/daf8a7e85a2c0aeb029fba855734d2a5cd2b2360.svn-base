@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<faces-config
+    xmlns="http://java.sun.com/xml/ns/javaee"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/javaee 
+    http://java.sun.com/xml/ns/javaee/web-facesconfig_2_0.xsd"
+    version="2.0">
+    
+    <application>
+    	<el-resolver>org.springframework.web.jsf.el.SpringBeanFacesELResolver</el-resolver>
+    </application>
+    
+    	
+		<converter>
+		<converter-id>userConverter</converter-id>
+		<converter-class>com.karimovceyhun.workflow.converter.UserConverter</converter-class>
+	</converter>
+	
+	<converter>
+		<converter-id>statusConverter</converter-id>
+		<converter-class>com.karimovceyhun.workflow.converter.StatusConverter</converter-class>
+	</converter>
+	
+	<converter>
+		<converter-id>projectConverter</converter-id>
+		<converter-class>com.karimovceyhun.workflow.converter.ProjectConverter</converter-class>
+	</converter>
+	<converter>
+		<converter-id>nodeConverter</converter-id>
+		<converter-class>com.karimovceyhun.workflow.converter.NodeConverter</converter-class>
+	</converter>
+	<converter>
+		<converter-id>workFlowConverter</converter-id>
+		<converter-class>com.karimovceyhun.workflow.converter.WorkflowConverter</converter-class>
+	</converter>
+	
+	<navigation-rule>
+		<from-view-id>/login.xhtml</from-view-id>
+		<navigation-case>
+			<from-action>#{login.login}</from-action>
+			<from-outcome>success</from-outcome>
+			<to-view-id>/pages/welcome.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	
+	<navigation-rule>
+		<from-view-id>/pages/workflowListing.xhtml</from-view-id>
+		<navigation-case>
+			<from-action>#{workflowListingManagedBean.edit}</from-action>
+			<from-outcome>editWorkflow</from-outcome>
+			<to-view-id>/pages/workflowEditor.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	<navigation-rule>
+		<from-view-id>/pages/workOrderEditor.xhtml</from-view-id>
+		<navigation-case>
+			<from-action>#{workorderEditorManagedBean.save}</from-action>
+			<from-outcome>success</from-outcome>
+			<to-view-id>/pages/taskListing.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	<navigation-rule>
+		<from-view-id>/pages/workflowListing.xhtml</from-view-id>
+		<navigation-case>
+			<from-action>#{workflowListingManagedBean.addNew}</from-action>
+			<from-outcome>addNewWorkflow</from-outcome>
+			<to-view-id>/pages/workflowEditor.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	
+	<navigation-rule>
+		<from-view-id>/pages/workflowEditor.xhtml</from-view-id>
+		<navigation-case>
+			<from-action>#{workflowEditorManagedBean.save}</from-action>
+			<from-outcome>workflowListing</from-outcome>
+			<to-view-id>/pages/workflowListing.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	
+	<navigation-rule>
+		<from-view-id>/pages/workflowEditor.xhtml</from-view-id>
+		<navigation-case>
+			<from-action>#{workflowEditorManagedBean.cancel}</from-action>
+			<from-outcome>workflowListing</from-outcome>
+			<to-view-id>/pages/workflowListing.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	
+	<navigation-rule>
+		<from-view-id>/pages/taskListing.xhtml</from-view-id>
+		<navigation-case>
+			<from-action>#{taskListingManagedBean.selectTask}</from-action>
+			<from-outcome>taskView</from-outcome>
+			<to-view-id>/pages/taskView.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	
+	<navigation-rule>
+		<from-view-id>/pages/common/menu.xhtml</from-view-id>
+		<navigation-case>
+			<from-action>#{userScopedMenuManagedBean.jump}</from-action>
+			<from-outcome>taskView</from-outcome>
+			<to-view-id>/pages/taskView.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+<!-- 	<navigation-rule>
+		<from-view-id>/pages/common/menu.xhtml</from-view-id>
+		<navigation-case>
+			<from-action>#{userScopedMenuManagedBean.logout}</from-action>
+			<from-outcome>logout</from-outcome>
+			<to-view-id>/login.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+ -->	
+
+    
+</faces-config>

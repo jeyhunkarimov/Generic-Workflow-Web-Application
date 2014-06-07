@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+
+<h:head>
+	<title>WorkOrder Application</title>
+</h:head>
+<h:body>
+	<h:outputStylesheet library="css" name="style.css"  />
+	<ui:include src="/pages/common/menu.xhtml" />
+	<h2>WorkOrder User Listing</h2>
+
+
+	<br />
+
+	<h:form>
+		<p:commandButton accesskey="n"
+			action="#{userListingManagedBean.addNew}"
+			update=":editorForm"
+			value="Add New User"
+			oncomplete="editorDialog.show()"
+			>
+		</p:commandButton>
+	</h:form>
+	
+	
+	<h:form id="userListForm">
+	 	<p:growl id="growl" showDetail="true"/>
+		<p:dataTable id="tbl" var="item" widgetVar="userRows"
+			value="#{userListingManagedBean.users}" paginator="true" rowKey="#{item.id}"
+			rows="10"
+			paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+			rowsPerPageTemplate="5,10,15" selectionMode="single"> 
+ 			
+			
+			
+			<f:facet name="header">
+				<h:outputText value="User List" />
+			</f:facet>
+
+			<p:column sortBy="#{item.id}">
+				<f:facet name="header">
+					<h:outputText value="ID" />
+				</f:facet>
+				<h:outputText value="#{item.id}"></h:outputText>
+			</p:column>
+			
+			<p:column sortBy="#{item.fullName}">
+				<f:facet name="header">
+					<h:outputText value="Name" />
+				</f:facet>
+				<h:outputText value="#{item.fullName}"></h:outputText>
+			</p:column>
+
+			<p:column sortBy="#{item.email}">
+				<f:facet name="header">
+					<h:outputText value="Email" />
+				</f:facet>
+				<h:outputText value="#{item.email}"></h:outputText>
+			</p:column>
+			<p:column style="width:300px">
+					<f:facet name="header">
+						<h:column>
+							<h:outputText value="Action"></h:outputText>
+						</h:column>
+					</f:facet>
+					<h:panelGrid columns="2">
+						<p:commandLink title="Edit" 
+							action="#{userListingManagedBean.edit}"
+							ajax="true"
+							update=":editorForm"
+							oncomplete="editorDialog.show()">					
+							<f:param name="id" value="#{item.id}" />
+							<h:graphicImage value="../images/icons/application_edit.png" />
+						</p:commandLink>
+	
+						<p:commandLink 
+							title="Delete"
+							ajax="true"
+							oncomplete="confirmation.show()"
+							actionListener="#{userListingManagedBean.beanInitBeforeDelete}">
+							<f:param name="id" value="#{item.id}" />
+							<h:graphicImage value="../images/icons/application_delete.png" />
+						</p:commandLink>
+					</h:panelGrid>
+				</p:column>
+		</p:dataTable>
+   </h:form>
+
+
+	<h:form id="editorForm" styleClass="editor">
+		<p:dialog widgetVar="editorDialog" draggable="true" modal="true" closable="true" resizable="false" header="User Editor">
+			<h:panelGrid columns="2">
+				<p:fieldset legend="User Information" toggleable="true">
+	
+					<h:panelGrid columns="2">
+									
+						<h:outputText value="* Full Name"></h:outputText>
+						<h:inputText value="#{userListingManagedBean.bean.fullName}"
+							required="true" requiredMessage="Full Name is Required">
+						</h:inputText>
+		
+						<h:outputText value="* Email"></h:outputText>
+						<h:inputText required="true"
+							value="#{userListingManagedBean.bean.email}"
+							requiredMessage="Email is Required">
+						</h:inputText>
+		
+						<h:outputText value="* Password"></h:outputText>
+						<h:inputSecret required="true" id="pass"
+							value="#{userListingManagedBean.bean.password}"
+							requiredMessage="Password is Required">
+						</h:inputSecret>
+							
+						
+					</h:panelGrid>
+				</p:fieldset>
+
+			</h:panelGrid>
+			<h:panelGroup>
+				<h:commandButton action="#{userListingManagedBean.save}"
+					value="Save" accesskey="s">
+				</h:commandButton>
+				<h:commandButton action="#{userListingManagedBean.cancel}"
+					value="Cancel" accesskey="c" immediate="true">
+				</h:commandButton>
+			</h:panelGroup>
+		</p:dialog>
+	
+	</h:form>
+	
+	<h:form id="confirmationForm">
+	 	<p:confirmDialog id="confirmDialog" 
+	 		message="Are you sure to delete?" 
+	 		header="Initiating delete process" 
+	 		severity="alert" 
+	 		widgetVar="confirmation">    
+	        	<p:commandButton id="confirm" 
+	        		value="Yes" 
+	        		action="#{userListingManagedBean.delete}"
+	        		oncomplete="confirmation.hide()"
+	        		update=":userListForm"
+	        		/>  
+	        	<p:commandButton id="decline" 
+	        		value="No" 
+	        		onclick="confirmation.hide()" 
+	        		type="button" />   
+	    </p:confirmDialog>  
+	</h:form>
+
+
+</h:body>
+</html>

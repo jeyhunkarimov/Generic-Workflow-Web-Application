@@ -1,0 +1,19 @@
+
+insert into StatusChange (oldStatus_id, newStatus_id,action) values ('1','2','Assign');
+insert into StatusChange (oldStatus_id, newStatus_id,action) values ('2','3','Acknowledge');
+insert into StatusChange (oldStatus_id, newStatus_id,action) values ('3','4','Hold');
+insert into StatusChange (oldStatus_id, newStatus_id,action) values ('4','3','Resume');
+insert into StatusChange (oldStatus_id, newStatus_id,action) values ('3','5','Close');
+
+insert into StatusChange (oldStatus_id, newStatus_id,action) values ('6','7','Assign');
+insert into StatusChange (oldStatus_id, newStatus_id,action) values ('7','8','Acknowledge');
+insert into StatusChange (oldStatus_id, newStatus_id,action) values ('8','9','Hold');
+insert into StatusChange (oldStatus_id, newStatus_id,action) values ('9','8','Resume');
+insert into StatusChange (oldStatus_id, newStatus_id,action) values ('8','10','Accept');
+insert into StatusChange (oldStatus_id, newStatus_id,action) values ('8','11','Reject');
+
+insert into StatusChange (oldStatus_id, newStatus_id,action) values ('12','13','Assign');
+insert into StatusChange (oldStatus_id, newStatus_id,action) values ('13','14','Acknowledge');
+insert into StatusChange (oldStatus_id, newStatus_id,action) values ('14','15','Hold');
+insert into StatusChange (oldStatus_id, newStatus_id,action) values ('15','14','Resume');
+insert into StatusChange (oldStatus_id, newStatus_id,action) values ('14','16','Close');

@@ -1,0 +1,906 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+
+<h:head>
+	<title>Work Order Application</title>
+</h:head>
+
+<h:body>
+	<h:outputStylesheet library="css" name="style.css"  />
+	<ui:include src="/pages/common/menu.xhtml" />
+	<h2>Work Flow Editor</h2>
+	<script type="text/javascript">
+		document.getElementById("jumpForm:jumpText").value = "";
+		function noNumbers(e)
+		{
+			var keynum;
+			var keychar;
+			var numcheck;
+			var isCtrl;
+			var kl = e.ctrlKey;
+			if(window.event) // IE8 and earlier
+			{
+				keynum = e.keyCode;
+				if(window.event.ctrlKey)
+				{
+					isCtrl = true;
+				}
+				else
+				{
+					isCtrl = false;
+				}
+			}
+			else if(e.which) // IE9/Firefox/Chrome/Opera/Safari 
+			{
+				keynum = e.which;
+				if(e.ctrlKey)
+				{
+					isCtrl = true;
+				}
+				else
+				{
+					isCtrl = false;
+				}
+			}
+			keychar = String.fromCharCode(keynum);
+			
+				return !isNaN(keychar) ;
+
+		}
+	
+	</script>
+	<h:form id="editorForm" styleClass="editor">
+	
+		<p:fieldset name="Editor">
+			
+			<p:wizard widgetVar="wiz" 
+            	flowListener="#{workflowEditorManagedBean.onFlowProcess}">  
+				<p:tab id="workflow" title="Work Flow">
+					<p:messages id="messagesWorkflow" showDetail="true" autoUpdate="true"/>
+					<h:panelGrid columns="2">
+						<h:outputText value="* Workflow Name"></h:outputText>
+						<p:inputText value="#{workflowEditorManagedBean.workflow.name}" >
+						</p:inputText>
+						
+						<h:outputText value="Maximum Processing Time(in Hours)"></h:outputText>
+						<p:inputText value="#{workflowEditorManagedBean.workflow.maxProcessingTime}" onkeypress="return noNumbers(event)" required="true" requiredMessage="Maximum Processing Time Cannot be Empty"></p:inputText>
+						
+						<h:outputText value="Using Due Date in WorkOrder"></h:outputText>
+						<p:selectBooleanCheckbox value="#{workflowEditorManagedBean.workflow.usingDueDate}"/>
+						
+						<h:outputLabel value="Project Dependant :"></h:outputLabel>
+						<p:selectBooleanCheckbox value="#{workflowEditorManagedBean.workflow.projectDependant}">
+							<f:ajax execute="@this" render=":editorForm:panelGroup" />
+						</p:selectBooleanCheckbox>
+						
+						<h:panelGroup id="panelGroup">
+						<h:outputText id="manager" rendered="#{not workflowEditorManagedBean.workflow.projectDependant}" value="* Manager"></h:outputText>
+						<p:autoComplete id="autoCompleteManager" rendered="#{not workflowEditorManagedBean.workflow.projectDependant}" completeMethod="#{workflowEditorManagedBean.completeUser}" 
+							value="#{workflowEditorManagedBean.workflow.manager}" converter="userConverter" 
+							var="user" itemLabel="#{user.fullName}" itemValue="#{user}"> </p:autoComplete>
+						
+						
+						<h:outputText id="pickListP" rendered="#{workflowEditorManagedBean.workflow.projectDependant}" value="Projects"></h:outputText>
+						<p:pickList rendered="#{workflowEditorManagedBean.workflow.projectDependant}" id="pickListProject" value="#{workflowEditorManagedBean.projectPickList}"  
+			                var="dualProject" converter="projectConverter"
+			                itemLabel="#{dualProject.name}"  
+			                itemValue="#{dualProject}" />
+			            </h:panelGroup>
+					</h:panelGrid>
+				</p:tab>
+				<p:tab id="fields" title="Fields">
+					<p:panel header="Create Field" id="fieldEditor">
+						<h:panelGrid columns="4" id="grid">
+							<h:outputLabel value="Type :" for="txt_Type"></h:outputLabel>
+							
+							<p:selectOneMenu value="#{workflowEditorManagedBean.fieldType}">
+								<f:ajax execute="@this" render=":editorForm" />
+						    	<f:selectItem itemLabel="Select One" itemValue="" ></f:selectItem>
+								<f:selectItem itemLabel="Integer" itemValue="Integer" ></f:selectItem>
+								<f:selectItem itemLabel="String" itemValue="String" ></f:selectItem>
+								<f:selectItem itemLabel="Date" itemValue="Date" ></f:selectItem>
+								<f:selectItem itemLabel="Attachment" itemValue="Attachment" ></f:selectItem>
+								<f:selectItem itemLabel="Enum(array of string)" itemValue="Enum" ></f:selectItem>
+							</p:selectOneMenu>
+
+							<h:outputText rendered="#{workflowEditorManagedBean.fieldType != 'Enum'}"/>
+							
+							<p:inputText id="txt_Type" rendered="#{workflowEditorManagedBean.fieldType == 'Enum'}"
+								value="#{workflowEditorManagedBean.field.type}" />
+							
+							<p:tooltip for="txt_Type" value="Add strings with ',' seperator like (john,mike,other)"></p:tooltip>
+							
+							<h:outputLabel value="Fieldname :" for="txt_name"></h:outputLabel>
+							<p:inputText id="txt_name"
+								value="#{workflowEditorManagedBean.field.fieldname}" />
+							<h:outputText></h:outputText>
+							<h:outputText></h:outputText>
+							
+							<h:outputLabel value="Default Value :" for="txt_Value"></h:outputLabel>
+							<p:inputText id="txt_Value"
+								value="#{workflowEditorManagedBean.field.defaultValue}" />
+							<h:outputText></h:outputText>
+							<h:outputText></h:outputText>
+							
+							<h:outputLabel value="Required :" for="txt_Required"></h:outputLabel>
+							<p:selectBooleanCheckbox id="txt_Required"
+								value="#{workflowEditorManagedBean.field.required}" />
+							<h:outputText></h:outputText>
+							<h:outputText></h:outputText>
+							
+							<p:commandButton process="txt_name txt_Value txt_Type txt_Required @this" value="Add"
+								update="fieldList @parent"
+								action="#{workflowEditorManagedBean.addField}">
+								<p:collector value="#{workflowEditorManagedBean.field}"
+									addTo="#{workflowEditorManagedBean.fields}" />
+							</p:commandButton>
+	
+						</h:panelGrid>
+					</p:panel>
+					
+					<p:outputPanel >
+						<p:dataTable value="#{workflowEditorManagedBean.fields}"
+							paginator="true"  id="fieldList"
+							paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+							var="item">
+	
+							<p:column>
+								<f:facet name="header">
+									<h:outputText value="Name" />
+								</f:facet>
+								<h:outputText value="#{item.fieldname}" />
+							</p:column>
+	
+							<p:column>
+								<f:facet name="header">
+									<h:outputText value="Default Value" />
+								</f:facet>
+								<h:outputText value="#{item.defaultValue}" />
+							</p:column>
+							
+							<p:column>
+								<f:facet name="header">
+									<h:outputText value="Type" />
+								</f:facet>
+								<h:outputText value="#{item.type}" />
+							</p:column>
+							
+							<p:column>
+								<f:facet name="header">
+									<h:outputText value="Required" />
+								</f:facet>
+								<h:outputText value="#{item.required}" />
+							</p:column>
+							
+							<p:column>
+								<f:facet name="header">
+									<h:outputText value="Operation" />
+								</f:facet>
+								
+								<h:panelGrid columns="2">
+									<p:commandLink value="Edit" update=":editorForm:fieldEditor"
+										action="#{workflowEditorManagedBean.editField}" process="@this">
+										<f:param name="item" value="#{item}" />
+									</p:commandLink>
+									
+									<p:commandLink value="Remove" update="fieldList"
+										process="@this">
+										<p:collector value="#{item}"
+											removeFrom="#{workflowEditorManagedBean.fields}" />
+									</p:commandLink>
+								</h:panelGrid>
+							</p:column>
+						</p:dataTable>
+					</p:outputPanel>
+				</p:tab>
+				<p:tab id="userAbleToMonitor" title="Users Able To Monitor">
+			        <p:pickList id="pickListMonitor" value="#{workflowEditorManagedBean.userAbleToMonitor}"  
+		                var="dualUser" converter="userConverter"
+		                itemLabel="#{dualUser.fullName}" 
+		                itemValue="#{dualUser}" />
+				</p:tab>
+				<p:tab id="userAbleToOpen" title="Users Able To Open">
+					<p:pickList id="pickListOpen" value="#{workflowEditorManagedBean.userAbleToOpen}"  
+		                var="dualUser" converter="userConverter"
+		                itemLabel="#{dualUser.fullName}"  
+		                itemValue="#{dualUser}" />
+				</p:tab>
+				<p:tab id="nodes" title="Nodes">
+					<p:commandButton value="Add Process" update=":processForm" process="@this" action="#{workflowEditorManagedBean.newNodeProcess}" oncomplete="processDialog.show()">
+					</p:commandButton>
+					<p:commandButton value="Add Decision" update=":decisionForm" process="@this" action="#{workflowEditorManagedBean.newNodeDecision}" oncomplete="decisionDialog.show()">
+					</p:commandButton>
+					<p:commandButton value="Add Separator" update=":separatorForm" process="@this" action="#{workflowEditorManagedBean.newNodeSeperator}" oncomplete="separatorDialog.show()">
+					</p:commandButton>
+					<p:commandButton value="Add Collector" update=":collectorForm" process="@this" action="#{workflowEditorManagedBean.newNodeCollector}" oncomplete="collectorDialog.show()">
+					</p:commandButton>
+					<p:commandButton value="Add Terminate" update=":terminateForm" process="@this" action="#{workflowEditorManagedBean.newNode}" oncomplete="terminateDialog.show()">
+					</p:commandButton>
+					
+					<p:tabView>
+						<p:tab title="Process">
+							<p:outputPanel>
+								<p:dataTable value="#{workflowEditorManagedBean.processes}"
+									id="processList" var="item">
+			
+									<p:column>
+										<f:facet name="header">
+											<h:outputText value="Name" />
+										</f:facet>
+										<h:outputText value="#{item.name}" />
+									</p:column>
+			
+									<p:column>
+										<f:facet name="header">
+											<h:outputText value="Estimated Time" />
+										</f:facet>
+										<h:outputText value="#{item.estimatedTime}"/>
+									</p:column>
+									
+									<p:column>
+										<f:facet name="header">
+											<h:outputText value="Operation" />
+										</f:facet>
+										
+										<h:panelGrid columns="2">
+											<p:commandLink value="Edit" update=":processForm" oncomplete="processDialog.show()"
+												action="#{workflowEditorManagedBean.editProcess}" process="@this">
+												<f:param name="item" value="#{item}" />
+											</p:commandLink>
+											
+											<p:commandLink value="Remove" update="processList"
+												process="@this">
+												<p:collector value="#{item}"
+													removeFrom="#{workflowEditorManagedBean.processes}" />
+											</p:commandLink>
+										</h:panelGrid>
+									</p:column>
+								</p:dataTable>
+							</p:outputPanel>
+						</p:tab>
+						<p:tab title="Decision">
+							<p:outputPanel>
+								<p:dataTable value="#{workflowEditorManagedBean.decisions}"
+									id="decisionList" var="item">
+			
+									<p:column>
+										<f:facet name="header">
+											<h:outputText value="Name" />
+										</f:facet>
+										<h:outputText value="#{item.name}" />
+									</p:column>
+									<p:column>
+										<f:facet name="header">
+											<h:outputText value="Estimated Time" />
+										</f:facet>
+										<h:outputText value="#{item.estimatedTime}"/>
+									</p:column>
+									<p:column>
+										<f:facet name="header">
+											<h:outputText value="Operation" />
+										</f:facet>
+										
+										<h:panelGrid columns="2">
+											<p:commandLink value="Edit" update=":decisionForm" oncomplete="decisionDialog.show()"
+												action="#{workflowEditorManagedBean.editDecision}" process="@this">
+												<f:param name="item" value="#{item}" />
+											</p:commandLink>
+											
+											<p:commandLink value="Remove" update="decisionList"
+												process="@this">
+												<p:collector value="#{item}"
+													removeFrom="#{workflowEditorManagedBean.decisions}" />
+											</p:commandLink>
+										</h:panelGrid>
+									</p:column>
+								</p:dataTable>
+							</p:outputPanel>
+						</p:tab>
+						<p:tab title="Separator">
+							<p:outputPanel>
+								<p:dataTable value="#{workflowEditorManagedBean.separators}"
+									id="separatorList" var="item">
+			
+									<p:column>
+										<f:facet name="header">
+											<h:outputText value="Name" />
+										</f:facet>
+										<h:outputText value="#{item.name}" />
+									</p:column>
+
+									<p:column>
+										<f:facet name="header">
+											<h:outputText value="Operation" />
+										</f:facet>
+										
+										<h:panelGrid columns="2">
+											<p:commandLink value="Edit" update=":separatorForm" oncomplete="separatorDialog.show()"
+												action="#{workflowEditorManagedBean.editSeparator}" process="@this">
+												<f:param name="item" value="#{item}" />
+											</p:commandLink>
+											
+											<p:commandLink value="Remove" update="separatorList"
+												process="@this">
+												<p:collector value="#{item}"
+													removeFrom="#{workflowEditorManagedBean.separators}" />
+											</p:commandLink>
+										</h:panelGrid>
+									</p:column>
+								</p:dataTable>
+							</p:outputPanel>
+						</p:tab>
+						<p:tab title="Collector">
+							<p:outputPanel>
+								<p:dataTable value="#{workflowEditorManagedBean.collectors}"
+									id="collectorList" var="item">
+			
+									<p:column>
+										<f:facet name="header">
+											<h:outputText value="Name" />
+										</f:facet>
+										<h:outputText value="#{item.name}" />
+									</p:column>
+
+									<p:column>
+										<f:facet name="header">
+											<h:outputText value="Operation" />
+										</f:facet>
+										
+										<h:panelGrid columns="2">
+											<p:commandLink value="Edit" update=":collectorForm" oncomplete="collectorDialog.show()"
+												action="#{workflowEditorManagedBean.editCollector}" process="@this">
+												<f:param name="item" value="#{item}" />
+											</p:commandLink>
+											
+											<p:commandLink value="Remove" update="collectorList"
+												process="@this">
+												<p:collector value="#{item}"
+													removeFrom="#{workflowEditorManagedBean.collectors}" />
+											</p:commandLink>
+										</h:panelGrid>
+									</p:column>
+								</p:dataTable>
+							</p:outputPanel>
+						</p:tab>
+						<p:tab title="Terminate">
+							<p:outputPanel>
+								<p:dataTable value="#{workflowEditorManagedBean.terminates}"
+									id="terminateList" var="item">
+			
+									<p:column>
+										<f:facet name="header">
+											<h:outputText value="Name" />
+										</f:facet>
+										<h:outputText value="#{item.name}" />
+									</p:column>
+
+									<p:column>
+										<f:facet name="header">
+											<h:outputText value="Operation" />
+										</f:facet>
+										
+										<h:panelGrid columns="2">
+											<p:commandLink value="Edit" update=":terminateForm" oncomplete="terminateDialog.show()"
+												action="#{workflowEditorManagedBean.editTerminate}" process="@this">
+												<f:param name="item" value="#{item}" />
+											</p:commandLink>
+											
+											<p:commandLink value="Remove" update="terminateList"
+												process="@this">
+												<p:collector value="#{item}"
+													removeFrom="#{workflowEditorManagedBean.terminates}" />
+											</p:commandLink>
+										</h:panelGrid>
+									</p:column>
+								</p:dataTable>
+							</p:outputPanel>
+						</p:tab>
+					</p:tabView>
+					
+				</p:tab>
+				<p:tab id="nodeConnections" title="Node Connections">
+					
+					<p:messages id="messages" showDetail="true" autoUpdate="true"/>  
+		
+					<h:panelGrid columns="2">
+						<h:outputText value="Start Node" ></h:outputText>
+						<p:selectOneMenu value="#{workflowEditorManagedBean.workflow.startProcess}" converter="nodeConverter">
+							<f:selectItem itemLabel="Select One" itemValue="" ></f:selectItem>
+							<f:selectItems value="#{workflowEditorManagedBean.nodes}" var="node" itemLabel="#{node.name}" itemValue="#{node}"></f:selectItems>
+						</p:selectOneMenu>
+					</h:panelGrid>
+					
+					<p:dataTable value="#{workflowEditorManagedBean.processes}" var="process">  
+					    <p:column>
+							<f:facet name="header">
+								<h:outputText value="Processe Name" />
+							</f:facet>
+							<h:outputText value="#{process.name}"></h:outputText>
+						</p:column>
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Select Succeeding Node" />
+							</f:facet>
+						    <p:selectOneMenu value="#{process.succeedingProcess}" converter="nodeConverter">
+								<f:selectItem itemLabel="Select One" itemValue="" ></f:selectItem>
+								<f:selectItems value="#{workflowEditorManagedBean.succeedingNodes}" var="node" itemLabel="#{node.name}" itemValue="#{node}"></f:selectItems>
+							</p:selectOneMenu>
+						</p:column>
+					</p:dataTable>
+					<p:dataTable value="#{workflowEditorManagedBean.collectors}" var="collector">  
+					    <p:column>
+							<f:facet name="header">
+								<h:outputText value="Collector Name" />
+							</f:facet>
+							<h:outputText value="#{collector.name}"></h:outputText>
+						</p:column>
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Select Succeeding Node" />
+							</f:facet>
+						    <p:selectOneMenu value="#{collector.succeedingProcess}" converter="nodeConverter">
+								<f:selectItem itemLabel="Select One" itemValue="" ></f:selectItem>
+								<f:selectItems value="#{workflowEditorManagedBean.succeedingNodes}" var="node" itemLabel="#{node.name}" itemValue="#{node}"></f:selectItems>
+							</p:selectOneMenu>
+						</p:column>
+					</p:dataTable>
+					<p:dataTable value="#{workflowEditorManagedBean.decisions}" var="decision">  
+					    <p:column>
+							<f:facet name="header">
+								<h:outputText value="Decision Name" />
+							</f:facet>
+							<h:outputText value="#{decision.name}"></h:outputText>
+						</p:column>
+					    <p:column>
+							<f:facet name="header">
+								<h:outputText value="Select Accept Succeeding Node" />
+							</f:facet>
+						    <p:selectOneMenu value="#{decision.acceptedsucceedingProcess}" converter="nodeConverter">
+								<f:selectItem itemLabel="Select One" itemValue="" ></f:selectItem>
+								<f:selectItems value="#{workflowEditorManagedBean.succeedingNodes}" var="node" itemLabel="#{node.name}" itemValue="#{node}"></f:selectItems>
+							</p:selectOneMenu>
+						</p:column>
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Select Reject Succeeding Node" />
+							</f:facet>
+							<p:selectOneMenu value="#{decision.rejectedsucceedingProcess}" converter="nodeConverter">
+								<f:selectItem itemLabel="Select One" itemValue="" ></f:selectItem>
+								<f:selectItems value="#{workflowEditorManagedBean.succeedingNodes}" var="node" itemLabel="#{node.name}" itemValue="#{node}"></f:selectItems>
+							</p:selectOneMenu>
+						</p:column>
+					</p:dataTable>
+					<p:dataTable value="#{workflowEditorManagedBean.separators}" var="separator">  
+					   <p:column>
+							<f:facet name="header">
+								<h:outputText value="Separator Name" />
+							</f:facet>
+							<h:outputText value="#{separator.name}"></h:outputText>
+						</p:column>
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Select Reject Succeeding Node" />
+							</f:facet>
+							<h:panelGrid columns="2">
+							    <p:selectOneMenu id="succeedingNodeMenu" value="#{separator.currentSuccedingNode}" converter="nodeConverter" immediate="true" >
+							    	<f:selectItem itemLabel="Select One" itemValue="" ></f:selectItem>
+									<f:selectItems value="#{workflowEditorManagedBean.succeedingNodes}" var="node" itemLabel="#{node.name}" itemValue="#{node}"></f:selectItems>
+								</p:selectOneMenu>
+								<p:commandButton value="Add" update=":editorForm:separatorSuccedingList" action="#{workflowEditorManagedBean.addSucceedingNode}" >
+									<p:collector value="#{separator.currentSuccedingNode}"
+										addTo="#{separator.succeedingProcesses}" />
+								</p:commandButton>
+							</h:panelGrid>
+						</p:column>
+					</p:dataTable>
+					<p:dataTable id="separatorSuccedingList" value="#{workflowEditorManagedBean.separators}" var="separator">  
+						<f:facet name="header">
+							<h:outputText value="Seperators Succeding Processes" />
+						</f:facet>
+						<p:subTable value="#{separator.succeedingProcesses}"
+							var="item">
+							<f:facet name="header">
+								#{separator.name}
+							</f:facet>
+							<p:column>
+								<f:facet name="header">
+									<h:outputText value="Name" />
+								</f:facet>
+								<h:outputText value="#{item.name}" />
+							</p:column>
+							<p:column>
+								<f:facet name="header">
+									<h:outputText value="Operation" />
+								</f:facet>
+								<h:panelGrid>
+									<p:commandLink value="Remove" update=":editorForm:separatorSuccedingList"
+										process="@this">
+										<p:collector value="#{item}"
+											removeFrom="#{separator.succeedingProcesses}" />
+									</p:commandLink>
+								</h:panelGrid>
+							</p:column>
+						</p:subTable>
+					</p:dataTable>
+				</p:tab>
+				<p:tab id="finalize" title="Finalize">
+					<br></br>
+					<br></br>
+					<h:panelGroup>
+						
+					 	<p:commandButton value="Print"  icon="ui-icon-print" ajax="false">
+							<p:printer target="printView" />
+						</p:commandButton> 
+						
+						<p:commandButton action="#{workflowEditorManagedBean.save}"
+							value="Save" accesskey="s" immediate="true" ajax="false">
+						</p:commandButton>
+						
+						<p:commandButton action="#{workflowEditorManagedBean.cancel}"
+							value="Cancel" accesskey="c" immediate="true" ajax="false">
+						</p:commandButton>
+
+					</h:panelGroup>
+					<br></br>
+					<br></br>
+					<h:panelGroup>
+					
+						 <p:graphicImage id="printView" value="./../Image">
+							<f:param name="imageInByte" value="#{workflowEditorManagedBean.imageInByte}" />
+						</p:graphicImage> 
+					</h:panelGroup>
+				</p:tab>
+			</p:wizard>
+		</p:fieldset>
+	</h:form>
+	<br/>
+
+	<h:form id="processForm">
+		<p:dialog widgetVar="processDialog" modal="true">
+			<p:panel header="Process Editor">
+				<h:panelGrid columns="2">
+					<h:outputLabel value="Process Name :" ></h:outputLabel>
+					<p:inputText value="#{workflowEditorManagedBean.process.name}" />
+					
+					<h:outputLabel value="Estimated Time :" ></h:outputLabel>
+					<p:inputText value="#{workflowEditorManagedBean.process.estimatedTime}" required="true" requiredMessage="Estimated Time Cannot be empty"/>
+					
+					<h:outputLabel value="Task Description :" ></h:outputLabel>
+					<p:inputText value="#{workflowEditorManagedBean.process.description}" />
+
+					<h:outputLabel value="Succeeding Responsable Selectable :"></h:outputLabel>
+					<p:selectBooleanCheckbox value="#{workflowEditorManagedBean.process.succeedingResponsableSelectable}" />
+					
+					<h:outputLabel rendered="#{workflowEditorManagedBean.workflow.projectDependant}" value="Project Dependant :"></h:outputLabel>
+					<p:selectBooleanCheckbox rendered="#{workflowEditorManagedBean.workflow.projectDependant}" value="#{workflowEditorManagedBean.process.projectDependant}">
+						<p:ajax update="pickListMonitorProcess"></p:ajax>
+					</p:selectBooleanCheckbox>
+					
+				</h:panelGrid>
+				<p:pickList id="pickListMonitorProcess" value="#{workflowEditorManagedBean.assignableUsers}"  
+	                var="dualUser" converter="userConverter"
+	                itemLabel="#{dualUser.fullName}"  
+	                itemValue="#{dualUser}" />
+	                
+	             <p:dataTable id="actionSelection" var="item" rows="10" value="#{workflowEditorManagedBean.processTable}">
+			        <f:facet name="header">  
+			            Action Selection  
+			        </f:facet>   
+			        
+			        <p:column>
+						<f:facet name="header">
+							<h:outputText value="Actions\ Mail sent to" />
+						</f:facet>
+						<h:outputText value="#{item.rowName}"></h:outputText>
+					</p:column>
+					
+					<p:column >
+						<f:facet name="header">
+							<h:outputText value="Successors" />
+						</f:facet>
+
+						<p:selectBooleanCheckbox value="#{item.columns[0]}" />  
+					</p:column>
+					
+					<p:column >
+						<f:facet name="header">
+							<h:outputText value="Predecessor" />
+						</f:facet>
+						<p:selectBooleanCheckbox value="#{item.columns[1]}" /> 
+					</p:column>
+					
+					<p:column >
+						<f:facet name="header">
+							<h:outputText value="Requester" />
+						</f:facet>
+						<p:selectBooleanCheckbox value="#{item.columns[2]}" /> 
+					</p:column>
+					
+					<p:column >
+						<f:facet name="header">
+							<h:outputText value="Manager" />
+						</f:facet>
+						<p:selectBooleanCheckbox value="#{item.columns[3]}" /> 
+					</p:column>
+					
+					<p:column >
+						<f:facet name="header">
+							<h:outputText value="Users monitoring" />
+						</f:facet>
+						<p:selectBooleanCheckbox value="#{item.columns[4]}" /> 
+					</p:column>
+					
+			     </p:dataTable>
+			     
+   				<p:commandButton value="Save" update=":editorForm" oncomplete="processDialog.hide()"
+					action="#{workflowEditorManagedBean.addProcess}" process=":processForm">
+					<p:collector value="#{workflowEditorManagedBean.process}" 
+						addTo="#{workflowEditorManagedBean.processes}" />
+				</p:commandButton>
+			</p:panel>
+		</p:dialog>
+	</h:form>
+	
+	<h:form id="decisionForm">
+		<p:dialog widgetVar="decisionDialog" modal="true">
+			<p:panel header="Decision Editor">
+				<h:panelGrid columns="2">
+					<h:outputLabel value="Decision Name :" ></h:outputLabel>
+					<p:inputText value="#{workflowEditorManagedBean.decision.name}" />
+					
+					<h:outputLabel value="Estimated Time :" ></h:outputLabel>
+					<p:inputText value="#{workflowEditorManagedBean.decision.estimatedTime}" required="true" requiredMessage="Estimated Time Cannot be empty"/>
+					
+					<h:outputLabel value="Task Description :" ></h:outputLabel>
+					<p:inputText value="#{workflowEditorManagedBean.decision.description}" />
+					
+					<h:outputLabel value="Accept Label :" ></h:outputLabel>
+					<p:inputText value="#{workflowEditorManagedBean.decision.acceptLabel}" />
+
+					<h:outputLabel value="Reject Label :"></h:outputLabel>
+					<p:inputText value="#{workflowEditorManagedBean.decision.rejectLabel}" />
+					
+					<h:outputLabel value="Succeeding Responsable Selectable :"></h:outputLabel>
+					<p:selectBooleanCheckbox value="#{workflowEditorManagedBean.decision.succeedingResponsableSelectable}" />
+					
+					<h:outputLabel rendered="#{workflowEditorManagedBean.workflow.projectDependant}" value="Project Dependant :"></h:outputLabel>
+					<p:selectBooleanCheckbox rendered="#{workflowEditorManagedBean.workflow.projectDependant}" value="#{workflowEditorManagedBean.decision.projectDependant}">
+						<p:ajax update="pickListMonitorDecision"></p:ajax>
+					</p:selectBooleanCheckbox>
+				</h:panelGrid>
+				<p:pickList id="pickListMonitorDecision" value="#{workflowEditorManagedBean.assignableUsers}"  
+	                var="dualUser" converter="userConverter"
+	                itemLabel="#{dualUser.fullName}"  
+	                itemValue="#{dualUser}" />
+	                
+	                <p:dataTable  var="item" rows="10" value="#{workflowEditorManagedBean.processTable}">
+			        <f:facet name="header">  
+			            Action Selection  
+			        </f:facet>   
+			        
+			        <p:column>
+						<f:facet name="header">
+							<h:outputText value="Actions\ Mail sent to" />
+						</f:facet>
+						<h:outputText value="#{item.rowName}"></h:outputText>
+					</p:column>
+					
+					<p:column >
+						<f:facet name="header">
+							<h:outputText value="Successors" />
+						</f:facet>
+
+						<p:selectBooleanCheckbox value="#{item.columns[0]}" />  
+					</p:column>
+					
+					<p:column >
+						<f:facet name="header">
+							<h:outputText value="Predecessor" />
+						</f:facet>
+						<p:selectBooleanCheckbox value="#{item.columns[1]}" /> 
+					</p:column>
+					
+					<p:column >
+						<f:facet name="header">
+							<h:outputText value="Requester" />
+						</f:facet>
+						<p:selectBooleanCheckbox value="#{item.columns[2]}" /> 
+					</p:column>
+					
+					<p:column >
+						<f:facet name="header">
+							<h:outputText value="Manager" />
+						</f:facet>
+						<p:selectBooleanCheckbox value="#{item.columns[3]}" /> 
+					</p:column>
+					
+					<p:column >
+						<f:facet name="header">
+							<h:outputText value="Users monitoring" />
+						</f:facet>
+						<p:selectBooleanCheckbox value="#{item.columns[4]}" /> 
+					</p:column>
+					
+			     </p:dataTable>
+	                
+   				<p:commandButton value="Add" update=":editorForm" oncomplete="decisionDialog.hide()"
+					action="#{workflowEditorManagedBean.addDecision}">
+					<p:collector value="#{workflowEditorManagedBean.decision}"
+						addTo="#{workflowEditorManagedBean.decisions}" />
+				</p:commandButton>
+			</p:panel>
+		</p:dialog>
+	</h:form>
+	<h:form id="separatorForm">
+		<p:dialog widgetVar="separatorDialog" modal="true">
+			<p:panel header="Separator Editor">
+				<h:panelGrid columns="2">
+					<h:outputLabel value="Separator Name :" ></h:outputLabel>
+					<p:inputText value="#{workflowEditorManagedBean.separator.name}" />
+										
+					<h:outputLabel value="Estimated Time :" ></h:outputLabel>
+					<p:inputText value="#{workflowEditorManagedBean.separator.estimatedTime}" required="true" requiredMessage="Estimated Time Cannot be empty"/>
+					
+					<h:outputLabel value="Task Description :" ></h:outputLabel>
+					<p:inputText value="#{workflowEditorManagedBean.separator.description}" />
+					
+					<h:outputLabel rendered="#{workflowEditorManagedBean.workflow.projectDependant}" value="Project Dependant :"></h:outputLabel>
+					<p:selectBooleanCheckbox rendered="#{workflowEditorManagedBean.workflow.projectDependant}" value="#{workflowEditorManagedBean.separator.projectDependant}">
+						<p:ajax update="pickListMonitorSeparator"></p:ajax>
+					</p:selectBooleanCheckbox>
+				</h:panelGrid>
+				<p:pickList id="pickListMonitorSeparator" value="#{workflowEditorManagedBean.assignableUsers}"  
+	                var="dualUser" converter="userConverter"
+	                itemLabel="#{dualUser.fullName}"  
+	                itemValue="#{dualUser}" />
+	                
+	                <p:dataTable  var="item" rows="10" value="#{workflowEditorManagedBean.processTable}">
+			        <f:facet name="header">  
+			            Action Selection  
+			        </f:facet>   
+			        
+			        <p:column>
+						<f:facet name="header">
+							<h:outputText value="Actions\ Mail sent to" />
+						</f:facet>
+						<h:outputText value="#{item.rowName}"></h:outputText>
+					</p:column>
+					
+					<p:column >
+						<f:facet name="header">
+							<h:outputText value="Successors" />
+						</f:facet>
+
+						<p:selectBooleanCheckbox value="#{item.columns[0]}" />  
+					</p:column>
+					
+					<p:column >
+						<f:facet name="header">
+							<h:outputText value="Predecessor" />
+						</f:facet>
+						<p:selectBooleanCheckbox value="#{item.columns[1]}" /> 
+					</p:column>
+					
+					<p:column >
+						<f:facet name="header">
+							<h:outputText value="Requester" />
+						</f:facet>
+						<p:selectBooleanCheckbox value="#{item.columns[2]}" /> 
+					</p:column>
+					
+					<p:column >
+						<f:facet name="header">
+							<h:outputText value="Manager" />
+						</f:facet>
+						<p:selectBooleanCheckbox value="#{item.columns[3]}" /> 
+					</p:column>
+					
+					<p:column >
+						<f:facet name="header">
+							<h:outputText value="Users monitoring" />
+						</f:facet>
+						<p:selectBooleanCheckbox value="#{item.columns[4]}" /> 
+					</p:column>
+					
+			     </p:dataTable>
+	                
+   				<p:commandButton value="Add" update=":editorForm" oncomplete="separatorDialog.hide()"
+					action="#{workflowEditorManagedBean.addSeparator}">
+					<p:collector value="#{workflowEditorManagedBean.separator}"
+						addTo="#{workflowEditorManagedBean.separators}" />
+				</p:commandButton>
+			</p:panel>
+		</p:dialog>
+	</h:form>
+	<h:form id="collectorForm">
+		<p:dialog widgetVar="collectorDialog" modal="true">
+			<p:panel header="Collector Editor">
+				<h:panelGrid columns="2">
+					<h:outputLabel value="Collector Name :" ></h:outputLabel>
+					<p:inputText value="#{workflowEditorManagedBean.collector.name}" />
+				</h:panelGrid>
+				
+				<p:dataTable var="item" rows="10" value="#{workflowEditorManagedBean.processTable}">
+			        <f:facet name="header">  
+			            Action Selection  
+			        </f:facet>   
+			        
+			        <p:column>
+						<f:facet name="header">
+							<h:outputText value="Actions\ Mail sent to" />
+						</f:facet>
+						<h:outputText value="#{item.rowName}"></h:outputText>
+					</p:column>
+					
+					<p:column >
+						<f:facet name="header">
+							<h:outputText value="Successors" />
+						</f:facet>
+
+						<p:selectBooleanCheckbox value="#{item.columns[0]}" />  
+					</p:column>
+					
+					<p:column >
+						<f:facet name="header">
+							<h:outputText value="Predecessor" />
+						</f:facet>
+						<p:selectBooleanCheckbox value="#{item.columns[1]}" /> 
+					</p:column>
+					
+					<p:column >
+						<f:facet name="header">
+							<h:outputText value="Requester" />
+						</f:facet>
+						<p:selectBooleanCheckbox value="#{item.columns[2]}" /> 
+					</p:column>
+					
+					<p:column >
+						<f:facet name="header">
+							<h:outputText value="Manager" />
+						</f:facet>
+						<p:selectBooleanCheckbox value="#{item.columns[3]}" /> 
+					</p:column>
+					
+					<p:column >
+						<f:facet name="header">
+							<h:outputText value="Users monitoring" />
+						</f:facet>
+						<p:selectBooleanCheckbox value="#{item.columns[4]}" /> 
+					</p:column>
+					
+			     </p:dataTable>
+				
+   				<p:commandButton value="Add" update=":editorForm" oncomplete="collectorDialog.hide()"
+					action="#{workflowEditorManagedBean.addCollector}">
+					<p:collector value="#{workflowEditorManagedBean.collector}"
+						addTo="#{workflowEditorManagedBean.collectors}" />
+				</p:commandButton>
+			</p:panel>
+		</p:dialog>
+	</h:form>
+	<h:form id="terminateForm">
+		<p:dialog widgetVar="terminateDialog" modal="true">
+			<p:panel header="Terminate Editor">
+				<h:panelGrid columns="2">
+					<h:outputLabel value="Terminate Name :" ></h:outputLabel>
+					<p:inputText value="#{workflowEditorManagedBean.terminate.name}" />
+				</h:panelGrid>
+				
+   				<p:commandButton value="Add" update=":editorForm" oncomplete="terminateDialog.hide()"
+					action="#{workflowEditorManagedBean.addTerminate}">
+					<p:collector value="#{workflowEditorManagedBean.terminate}"
+						addTo="#{workflowEditorManagedBean.terminates}" />
+				</p:commandButton>
+			</p:panel>
+		</p:dialog>
+	</h:form>
+
+</h:body>
+</html>

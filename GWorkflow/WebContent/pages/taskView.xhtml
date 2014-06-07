@@ -1,0 +1,373 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+
+<h:head>
+	<title>WorkOrder Application</title>
+</h:head>
+<h:body>
+	<h:outputStylesheet library="css" name="style.css"  />
+
+	<ui:include src="/pages/common/menu.xhtml" />
+	<h2>Task View</h2>
+	<h:form id="mainForm" enctype="multipart/form-data">
+		<p:fieldset legend="Task Information" >
+			<h:panelGrid columns="6">
+				<p:panel>
+					<h:panelGrid columns="2">
+						<h:outputText value="Requestor   :" style="font-weight:bold"></h:outputText>
+						<h:outputText value="#{taskViewManagedBean.requestor.fullName}"></h:outputText>
+					</h:panelGrid>
+				</p:panel>
+				
+				<p:panel>
+					<h:panelGrid columns="2">
+						<h:outputText value="Responsible   :" style="font-weight:bold"></h:outputText>
+						<h:outputText value="#{taskViewManagedBean.currentTask.responsible.fullName}"></h:outputText>
+					</h:panelGrid>
+				</p:panel>
+				
+				<p:panel>
+					<h:panelGrid columns="2">
+						<h:outputText value="Status   :" style="font-weight:bold"></h:outputText>
+						<h:outputText value="#{taskViewManagedBean.currentTask.status.label}"></h:outputText>
+					</h:panelGrid>
+				</p:panel>
+				
+				<p:panel>
+					<h:panelGrid columns="2">
+						<h:outputText value="Task Description   :" style="font-weight:bold"></h:outputText>
+						<h:outputText value="#{taskViewManagedBean.currentTask.node.description}"></h:outputText>
+					</h:panelGrid>
+				</p:panel>
+				
+				<p:panel>
+					<h:panelGrid columns="2">
+						<h:outputText value="Start Date   :" style="font-weight:bold"></h:outputText>
+						<h:outputText value="#{taskViewManagedBean.currentTask.startTime}">
+							<f:convertDateTime pattern="dd/MMM/yyyy"></f:convertDateTime>
+						</h:outputText>
+					</h:panelGrid>
+				</p:panel>
+				
+				<p:panel>
+					<h:panelGrid columns="2">
+						<h:outputText value="Due Date   :" style="font-weight:bold"></h:outputText>
+						<h:outputText value="#{taskViewManagedBean.currentTask.workorder.dueDate}">
+							<f:convertDateTime pattern="dd/MMM/yyyy"></f:convertDateTime>
+						</h:outputText>
+					</h:panelGrid>
+				</p:panel>
+			</h:panelGrid>
+			<p:panel>
+				<h:panelGrid columns="2">
+					<h:outputText value="Workorder Description   :" style="font-weight:bold"></h:outputText>
+					<h:outputText value="#{taskViewManagedBean.currentTask.workorder.summary}"></h:outputText>
+				</h:panelGrid>
+			</p:panel>
+		</p:fieldset>
+		<br></br>
+		<br></br>
+		
+		<p:fieldset legend="WorkOrder Fields" >
+			<p:panel>
+				<p:dataTable id="tbl" var="item" 
+					value="#{taskViewManagedBean.workorderFieldValues}" paginator="false" rowKey="#{item.id}">
+					
+					<f:facet name="header">
+						<h:outputText value="Fields" />
+					</f:facet>
+						
+					<p:column>
+						<f:facet name="header">
+								<h:outputText value="Name" />
+						</f:facet>
+						<h:outputText value="#{item.field.fieldname}" />
+					</p:column>
+			
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Default Value" />
+						</f:facet>
+						<h:outputText value="#{item.field.defaultValue}" />
+					</p:column>
+						
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Type" />
+						</f:facet>
+						<h:outputText value="#{item.field.type}" />
+					</p:column>
+						
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Required" />
+						</f:facet>
+						<h:outputText value="#{item.field.required}" />
+					</p:column>
+					
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Value" />
+						</f:facet>
+						<h:outputText value="#{item.value}" rendered="#{item.field.type != 'Attachment'}"/>
+						<h:commandLink action="#{taskViewManagedBean.downloadFile}" rendered="#{item.field.type == 'Attachment'}"> Download File
+							<f:param name="path" value="#{item.value}"></f:param> 
+						</h:commandLink>
+					</p:column>
+		
+				</p:dataTable>
+			</p:panel>
+		</p:fieldset>
+		
+		<br/>
+		<p:fieldset legend="Add Attachment">
+				<h:panelGrid columns="4">
+					<p:fileUpload fileUploadListener="#{taskViewManagedBean.handleFileUpload}" 
+						showButtons="true"
+		            	mode="advanced"
+		            	update=":mainForm:attachments">
+    				<f:attribute name="itemId" value="3" />
+    			</p:fileUpload>
+				</h:panelGrid>
+		</p:fieldset>
+		
+		<br></br>
+		
+		<p:fieldset legend="Work Order Attachments">
+			<p:panel>
+				<p:dataTable var="item" 
+					value="#{taskViewManagedBean.currentTask.workorder.attachments}" paginator="false" rowKey="#{item.id}" id="attachments">
+					
+					<f:facet name="header">
+						<h:outputText value="Attachments" />
+					</f:facet>
+						
+					<p:column>
+						<f:facet name="header">
+								<h:outputText value="File Name" />
+						</f:facet>
+						<h:outputText value="#{item.filename}" />
+					</p:column>
+			
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Download" />
+						</f:facet>
+						<h:commandLink action="#{taskViewManagedBean.downloadFile}"> Download File
+							<f:param name="path" value="#{item.fileAddress}"></f:param> 
+						</h:commandLink>
+					</p:column>
+		
+				</p:dataTable>
+			</p:panel>
+		</p:fieldset>
+		
+		<br></br>
+		
+		<p:fieldset legend="Task Actions" 
+			rendered="#{taskViewManagedBean.currentTask.status.statusType != '3' and 
+						taskViewManagedBean.currentTask.status.statusType != '4' and 
+						taskViewManagedBean.currentTask.status.statusType != '5' and
+						( taskViewManagedBean.assignableUser or taskViewManagedBean.isManager )
+			}">
+			<p:panel>
+				<h:panelGrid columns="5">
+					<p:panel>
+						<h:panelGrid columns="2" rendered="#{taskViewManagedBean.assignableUser}">
+							<p:commandButton value="Change Status to :" action="#{taskViewManagedBean.changeStatus}" ajax="false" update=":mainForm"></p:commandButton>
+							 <p:selectOneMenu id="som" value="#{taskViewManagedBean.selectedStatus}" converter="statusConverter">  
+					            <f:selectItems value="#{taskViewManagedBean.changedTaskStatuses}" var="status" itemLabel="#{status.label}" itemValue="#{status}"></f:selectItems>  
+					        </p:selectOneMenu>  
+						</h:panelGrid>
+					</p:panel>
+					
+					<p:panel rendered="#{taskViewManagedBean.isManager}">
+						<h:panelGrid columns="2">
+							<p:commandButton value="Assign to :" action="#{taskViewManagedBean.assignTo}" ajax="false"></p:commandButton>
+							 <p:selectOneMenu id="som2" value="#{taskViewManagedBean.assignedUser}" converter="userConverter" type="submit" oncomplete="alert('Task assigned to user');">  
+					            <f:selectItems value="#{taskViewManagedBean.assignableUsers}" var="user" itemLabel="#{user.fullName}" itemValue="#{user}"></f:selectItems>  
+					        </p:selectOneMenu> 
+						</h:panelGrid>
+					</p:panel>
+				</h:panelGrid>
+			</p:panel>
+		</p:fieldset>
+	
+		<br/>
+		
+		<p:fieldset legend="Add Note">
+			<h:panelGrid columns="1">
+				<p:commandButton value="Add Note :" action="#{taskViewManagedBean.addNote}" update=":mainForm"></p:commandButton>
+				<p:inputTextarea value="#{taskViewManagedBean.noteText}" cols="100"></p:inputTextarea>
+			</h:panelGrid>
+		</p:fieldset>
+		
+		<p:fieldset legend="Workorder Notes">
+			<p:dataTable id="tblNote" var="item" 
+					value="#{taskViewManagedBean.currentTask.workorder.notes}" paginator="true" rowKey="#{item.id}"
+					rows="10"
+					paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+					rowsPerPageTemplate="5,10,15">
+					
+					<f:facet name="header">
+						<h:outputText value="Notes" />
+					</f:facet>
+						
+					<p:column>
+						<f:facet name="header">
+								<h:outputText value="Date" />
+						</f:facet>
+						<h:outputText value="#{item.date}" >
+						<!-- 	<f:convertDateTime pattern="dd/mm/yyyy"></f:convertDateTime> -->
+						</h:outputText>
+					</p:column>
+					
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Noted User" />
+						</f:facet>
+						<h:outputText value="#{item.user.fullName}" />
+					</p:column>
+						
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Note" />
+						</f:facet>
+						<h:outputText value="#{item.note}" />
+					</p:column>
+					
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Actions" />
+						</f:facet>
+						<h:panelGrid columns="2" rendered="#{taskViewManagedBean.currentUser.id == item.user.id}">
+							<p:commandLink title="Edit" 
+								action="#{taskViewManagedBean.editNote}"
+								ajax="true"
+								update=":editorForm"
+								oncomplete="editorDialog.show()">
+								<f:param name="noteId" value="#{item.id}" />
+								<h:graphicImage value="../images/icons/application_edit.png" />
+							</p:commandLink>
+							<p:commandLink 
+								title="Delete"
+								ajax="true"
+								oncomplete="confirmation.show()"
+								actionListener="#{taskViewManagedBean.beanInitBeforeDelete}">
+								<f:param name="id" value="#{item.id}" />
+								<h:graphicImage value="../images/icons/application_delete.png" />
+							</p:commandLink>
+						</h:panelGrid>
+					</p:column>
+				</p:dataTable>
+		</p:fieldset>
+
+		<br></br>
+	
+		<p:fieldset legend="Task History">
+			<p:dataTable id="tblHistory" var="item" 
+					value="#{taskViewManagedBean.currentTask.workorder.history}" paginator="true" rowKey="#{item.id}"
+					rows="10"
+					paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+					rowsPerPageTemplate="5,10,15">
+					
+					<f:facet name="header">
+						<h:outputText value="History" />
+					</f:facet>
+						
+					<p:column>
+						<f:facet name="header">
+								<h:outputText value="Date Modified" />
+						</f:facet>
+						<h:outputText value="#{item.dateModified}" >
+						<!-- 	<f:convertDateTime pattern="dd/mm/yyyy"></f:convertDateTime> -->
+						</h:outputText>
+					</p:column>
+					
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Modified User" />
+						</f:facet>
+						<h:outputText value="#{item.user.fullName}" />
+					</p:column>
+						
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Field" />
+						</f:facet>
+						<h:outputText value="#{item.field}" />
+					</p:column>
+					
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Change" />
+						</f:facet>
+						<h:outputText value="#{item.chnge}" />
+					</p:column>
+				</p:dataTable>
+		</p:fieldset>
+		
+	</h:form>
+
+	<h:form id="form1" enctype="multipart/form-data">
+		<p:dialog widgetVar="closeDialog" visible="true" header="Select Responsible of the Next Task" rendered="#{taskViewManagedBean.showDialog}"> 
+			<p:panel>
+				<p:panel>
+					<p:selectOneMenu value="#{taskViewManagedBean.nextTaskResponsible}" converter="userConverter">  
+						  <f:selectItems value="#{taskViewManagedBean.nextTaskUsers}" var="user" itemLabel="#{user.fullName}" itemValue="#{user}"></f:selectItems>  
+					 </p:selectOneMenu> 
+				 </p:panel>
+				 <br></br>
+				 <p:panel>
+					 <h:panelGrid columns="3">
+						 <p:commandButton value="Assign" action="#{taskViewManagedBean.dialogAction}" ajax="false" oncomplete="window.location.reload()">
+						 	<f:param name="whichButton" value="assign"></f:param>
+						 </p:commandButton>
+						 <p:commandButton value="Ignore" action="#{taskViewManagedBean.dialogAction}" ajax="false" oncomplete="closeDialog.hide()" update=":mainForm">
+						 	<f:param name="whichButton" value="ignore"></f:param>
+						 </p:commandButton>
+						 <p:commandButton value="Do not close current task" action="#{taskViewManagedBean.dialogAction}" oncomplete="window.location.reload()" >
+						 	<f:param name="whichButton" value="cancel"></f:param>
+						 </p:commandButton>
+					 </h:panelGrid>
+				 </p:panel>
+			</p:panel>
+		</p:dialog>
+	</h:form>
+	
+	<h:form id="editorForm" enctype="multipart/form-data">
+		<p:dialog widgetVar="editorDialog" draggable="true" closable="true" resizable="true" header="Note Editor">
+			<h:panelGrid columns="2">
+				<p:inputTextarea value="#{taskViewManagedBean.currentNote.note}" cols="100"></p:inputTextarea>
+				<p:commandButton value="Change Note :" action="#{taskViewManagedBean.changeNote}" update=":mainForm" oncomplete="editorDialog.hide()"></p:commandButton>	
+			</h:panelGrid>
+		</p:dialog>
+	</h:form>
+	
+	<h:form id="confirmationForm" enctype="multipart/form-data">
+	 	<p:confirmDialog id="confirmDialog" 
+	 		message="Are you sure to delete?" 
+	 		header="Initiating delete process" 
+	 		severity="alert" 
+	 		widgetVar="confirmation">    
+	        	<p:commandButton id="confirm" 
+	        		value="Yes" 
+	        		action="#{taskViewManagedBean.delete}"
+	        		oncomplete="confirmation.hide()"
+	        		update=":mainForm"
+	        		/>  
+	        	<p:commandButton id="decline" 
+	        		value="No" 
+	        		onclick="confirmation.hide()" 
+	        		type="button" />   
+	    </p:confirmDialog>  
+	</h:form>
+</h:body>
+</html>

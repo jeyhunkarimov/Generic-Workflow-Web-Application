@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pageflow:Pageflow xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:pageflow="http://www.sybase.com/suade/pageflow" id="pf13830326976030" configfile="/GWorkflow/WebContent/WEB-INF/faces-config.xml">
+  <nodes xsi:type="pageflow:PFPage" name="login.xhtml" id="pf13932655548020" referenceLink="//@navigationRule.8/@navigationCase.0/@toViewId|" outlinks="pf13932655548021" path="/login.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="pages/welcome.xhtml" id="pf13932655548022" referenceLink="//@navigationRule.0/@navigationCase.0/@toViewId|" inlinks="pf13932655548021" path="/pages/welcome.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="pages/workflowListing.xhtml" id="pf13932655548023" referenceLink="//@navigationRule.5/@navigationCase.0/@toViewId|" outlinks="pf13932655548024 pf13932655548025" inlinks="pf13932655548026 pf13932655548027" path="/pages/workflowListing.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="pages/workflowEditor.xhtml" id="pf13932655548028" referenceLink="//@navigationRule.5/@fromViewId|" outlinks="pf13932655548026 pf13932655548027" inlinks="pf13932655548024 pf13932655548025" path="/pages/workflowEditor.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="pages/workOrderEditor.xhtml" id="pf13932655548029" referenceLink="//@navigationRule.2/@fromViewId|" outlinks="pf139326555480210" path="/pages/workOrderEditor.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="pages/taskListing.xhtml" id="pf139326555480211" referenceLink="//@navigationRule.6/@fromViewId|" outlinks="pf139326555480212" inlinks="pf139326555480210" path="/pages/taskListing.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="pages/taskView.xhtml" id="pf139326555480213" referenceLink="//@navigationRule.8/@navigationCase.0/@toViewId|" inlinks="pf139326555480212 pf139326555480214" path="/pages/taskView.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="pages/common/menu.xhtml" id="pf139326555480215" referenceLink="//@navigationRule.8/@fromViewId|" outlinks="pf139326555480214" path="/pages/common/menu.xhtml"/>
+  <links id="pf13932655548021" target="pf13932655548022" source="pf13932655548020" outcome="success" fromaction="#{login.login}"/>
+  <links id="pf13932655548024" target="pf13932655548028" source="pf13932655548023" outcome="editWorkflow" fromaction="#{workflowListingManagedBean.edit}"/>
+  <links id="pf139326555480210" target="pf139326555480211" source="pf13932655548029" outcome="success" fromaction="#{workorderEditorManagedBean.save}"/>
+  <links id="pf13932655548025" target="pf13932655548028" source="pf13932655548023" outcome="addNewWorkflow" fromaction="#{workflowListingManagedBean.addNew}"/>
+  <links id="pf13932655548026" target="pf13932655548023" source="pf13932655548028" outcome="workflowListing" fromaction="#{workflowEditorManagedBean.save}"/>
+  <links id="pf13932655548027" target="pf13932655548023" source="pf13932655548028" outcome="workflowListing" fromaction="#{workflowEditorManagedBean.cancel}"/>
+  <links id="pf139326555480212" target="pf139326555480213" source="pf139326555480211" outcome="taskView" fromaction="#{taskListingManagedBean.selectTask}"/>
+  <links id="pf139326555480214" target="pf139326555480213" source="pf139326555480215" outcome="taskView" fromaction="#{userScopedMenuManagedBean.jump}"/>
+</pageflow:Pageflow>

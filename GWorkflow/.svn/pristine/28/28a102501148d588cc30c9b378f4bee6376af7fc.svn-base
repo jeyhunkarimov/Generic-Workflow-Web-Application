@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+
+<h:form>
+
+	<p:menubar autoSubmenuDisplay="true"
+		model="#{userScopedMenuManagedBean.model}">
+	</p:menubar>
+</h:form>
+
+<table style="width: 100%;">
+	<tr>
+		<td><h:outputText
+				value="User: #{userScopedMenuManagedBean.username}" />
+		</td>
+		<td>
+			<div align="right">
+				<h:form id="jumpForm">
+					<p:inputText id="jumpText"
+						value="#{userScopedMenuManagedBean.jumpedTaskId}" onkeypress="return noNumbers(event)"/>
+					<p:commandButton action="#{userScopedMenuManagedBean.jump}"
+						value="Jump" ajax="false" />
+					<script type="text/javascript">
+						document.getElementById("jumpForm:jumpText").value = "";
+						function noNumbers(e)
+						{
+							var keynum;
+							var keychar;
+							var numcheck;
+							var isCtrl;
+							var kl = e.ctrlKey;
+							if(window.event) // IE8 and earlier
+							{
+								keynum = e.keyCode;
+								if(window.event.ctrlKey)
+								{
+									isCtrl = true;
+								}
+								else
+								{
+									isCtrl = false;
+								}
+							}
+							else if(e.which) // IE9/Firefox/Chrome/Opera/Safari
+							{
+								keynum = e.which;
+								if(e.ctrlKey)
+								{
+									isCtrl = true;
+								}
+								else
+								{
+									isCtrl = false;
+								}
+							}
+							keychar = String.fromCharCode(keynum);
+							
+								return !isNaN(keychar) || keynum == 8;
+
+							
+						}
+	
+					</script>
+				</h:form>
+				<h:form>
+					<p:commandLink value="Logout" ajax="false"
+						action="#{userScopedMenuManagedBean.logout}">
+					</p:commandLink>
+				</h:form>
+			</div></td>
+	</tr>
+
+</table>
+
+
+<p:messages id="messages" showDetail="true" autoUpdate="true" />
+
+
+
+</html>

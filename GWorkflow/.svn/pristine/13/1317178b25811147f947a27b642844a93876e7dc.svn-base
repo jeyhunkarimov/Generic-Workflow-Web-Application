@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+
+<h:head>
+	<title>WorkOrder Application</title>
+</h:head>
+<h:body>
+	<h:outputStylesheet library="css" name="style.css" />
+	<ui:include src="/pages/common/menu.xhtml" />
+	<h2>WorkOrder Editor</h2>
+
+	<h:form id="WorkOrderForm">
+		<h:panelGrid columns="2">
+
+			<h:outputText value="Select Work Flow">
+			</h:outputText>
+			<p:selectOneMenu
+				value="#{workorderEditorManagedBean.selectedWorkflow}"
+				converter="workFlowConverter">
+				<f:selectItem itemLabel="Select One" itemValue=""></f:selectItem>
+				<f:selectItems value="#{workorderEditorManagedBean.workflows}"
+					var="workFlow" itemLabel="#{workFlow.name}" itemValue="#{workFlow}"></f:selectItems>
+				<f:ajax execute="@this" render="WorkOrderForm" />
+			</p:selectOneMenu>
+
+			<h:outputText
+				rendered="#{workorderEditorManagedBean.selectedWorkflow ne NULL and workorderEditorManagedBean.selectedWorkflow.projectDependant}"
+				value="Select Project">
+			</h:outputText>
+			<p:selectOneMenu
+				rendered="#{workorderEditorManagedBean.selectedWorkflow ne NULL and workorderEditorManagedBean.selectedWorkflow.projectDependant}"
+				value="#{workorderEditorManagedBean.selectedProject}"
+				converter="projectConverter">
+				<f:selectItem itemLabel="Select One" itemValue=""></f:selectItem>
+				<f:selectItems
+					value="#{workorderEditorManagedBean.selectedWorkflow.projects}"
+					var="project" itemLabel="#{project.name}" itemValue="#{project}"></f:selectItems>
+				<f:ajax execute="@this" render="WorkOrderForm" />
+			</p:selectOneMenu>
+
+			<h:outputText
+				rendered="#{workorderEditorManagedBean.selectedWorkflow ne NULL}"
+				value="Due Date" />
+			<p:calendar pattern="MM/dd/yyyy HH:mm" minHour="9" maxHour="18"
+				rendered="#{workorderEditorManagedBean.selectedWorkflow ne NULL}"
+				disabled="#{!workorderEditorManagedBean.selectedWorkflow.usingDueDate}"
+				value="#{workorderEditorManagedBean.dueDate}" id="popupCal" />
+
+			<h:outputText
+				rendered="#{workorderEditorManagedBean.selectedProject ne NULL and workorderEditorManagedBean.selectedWorkflow.startProcess.succeedingResponsableSelectable}"
+				value="Select Responsible User">
+			</h:outputText>
+			<p:selectOneMenu
+				rendered="#{workorderEditorManagedBean.selectedProject ne NULL and workorderEditorManagedBean.selectedWorkflow.startProcess.succeedingResponsableSelectable}"
+				value="#{workorderEditorManagedBean.selectedUser}"
+				converter="userConverter" required="true">
+				<f:selectItem itemLabel="Select One" itemValue=""></f:selectItem>
+				<f:selectItems value="#{workorderEditorManagedBean.users}"
+					var="user" itemLabel="#{user.fullName}" itemValue="#{user}"></f:selectItems>
+			</p:selectOneMenu>
+
+			<h:outputText value="Work Order Summary *">
+			</h:outputText>
+			<h:inputTextarea
+				value="#{workorderEditorManagedBean.workorder.summary}">
+			</h:inputTextarea>
+		</h:panelGrid>
+
+		<p:dataTable id="fieldsTable"
+			rendered="#{workorderEditorManagedBean.selectedWorkflow ne NULL}"
+			value="#{workorderEditorManagedBean.fields}" var="item">
+
+			<f:facet name="header">
+				<h:outputText value="Please Enter the Fields" />
+			</f:facet>
+
+			<p:column>
+				<f:facet name="header">
+					<h:outputText value="Field Name" />
+				</f:facet>
+				<h:outputText value="#{item.fieldname}"></h:outputText>
+			</p:column>
+
+			<p:column>
+				<f:facet name="header">
+					<h:outputText value="Required" />
+				</f:facet>
+				<h:outputText value="#{item.required}"></h:outputText>
+			</p:column>
+
+			<p:column>
+				<f:facet name="header">
+					<h:outputText value="Value" />
+				</f:facet>
+
+				<p:inputText
+					rendered="#{workorderEditorManagedBean.getFieldType(item) == '1'}"
+					value="#{workorderEditorManagedBean.fieldValue[item.id].value}"
+					required="#{item.required}"></p:inputText>
+
+				<p:inputMask
+					rendered="#{workorderEditorManagedBean.getFieldType(item) == '4'}"
+					mask="99/99/9999"
+					value="#{workorderEditorManagedBean.fieldValue[item.id].value}"></p:inputMask>
+
+				<p:selectOneMenu
+					rendered="#{workorderEditorManagedBean.getFieldType(item) == '3'}"
+					value="#{workorderEditorManagedBean.fieldValue[item.id].value}"
+					required="#{item.required}">
+					<f:selectItems
+						value="#{workorderEditorManagedBean.getFieldEnums(item)}"></f:selectItems>
+				</p:selectOneMenu>
+
+				<p:fileUpload
+					fileUploadListener="#{workorderEditorManagedBean.handleFileUpload}"
+					immediate="true"
+					rendered="#{workorderEditorManagedBean.getFieldType(item) == '2' and (not workorderEditorManagedBean.isFinishedFileUpload[item.id])}"
+					showButtons="false" mode="advanced" required="#{item.required}"
+					auto="true" update=":WorkOrderForm:fieldsTable">
+					<f:attribute name="itemId" value="#{item.id}" />
+				</p:fileUpload>
+
+				<h:panelGrid
+					rendered="#{workorderEditorManagedBean.isFinishedFileUpload[item.id]}"
+					columns="2">
+					<h:commandLink action="#{workorderEditorManagedBean.downloadFile}"> Download File
+						<f:param name="downloadedFieldId" value="#{item.id}"></f:param>
+					</h:commandLink>
+					<p:commandButton value="Remove File"
+						action="#{workorderEditorManagedBean.removeFile}"
+						update=":WorkOrderForm:fieldsTable">
+						<f:param name="removedFieldId" value="#{item.id}" />
+					</p:commandButton>
+				</h:panelGrid>
+			</p:column>
+
+		</p:dataTable>
+
+		<p:commandButton action="#{workorderEditorManagedBean.save}"
+			process="@this" value="Save" accesskey="s" ajax="false">
+		</p:commandButton>
+	</h:form>
+
+</h:body>
+</html>

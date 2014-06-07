@@ -1,0 +1,103 @@
+body {
+	font-size:12px;
+}
+
+input[type="submit"]{
+	ui-button; ui-widget; ui-state-default; ui-corner-all; ui-button-text-only;
+}
+
+.rejected{
+	background-color:#FF6666;
+	text-align: center;	
+}
+
+.rejected input{
+	width:50px;
+	text-align: center;
+}
+
+.approved{
+	background-color:#00CC99;
+	text-align: center;	
+}
+
+.approved input{
+	width:50px;
+	text-align: center;
+}
+
+.waitingLastApproval{
+	background-color:#66CCCC;
+	text-align: center;
+	
+}
+
+.waitingLastApproval input{
+	width:50px;
+	text-align: center;
+}
+
+.submitted{
+	background-color:#FFFF99;
+	text-align: center;
+	
+}
+
+.submitted input{
+	width:50px;
+	text-align: center;
+}
+
+.notexisting{
+	background-color: #9999CC;
+	text-align: center;
+}
+
+.notexisting input{
+	width:50px;
+	text-align: center;
+}
+
+.initiated{
+	text-align: center;
+	
+}
+
+.initiated input{
+	width:50px;
+	text-align: center;
+}
+
+.columnTask {
+    width: 50%;
+}
+
+.LightGreen {
+    background-color: #A9FF53 !important;
+    background-image: none !important;
+    color: #320000 !important;
+}
+
+.LightYellow {
+    background-color: #FFFF80 !important;
+    background-image: none !important;
+    color: #320000 !important;
+}
+
+.LightRed {
+    background-color: #FFC3C3 !important;
+    background-image: none !important;
+    color: #320000 !important;
+}
+
+.LightBlue {
+    background-color: #00FFFF !important;
+    background-image: none !important;
+    color: #320000 !important;
+}
+
+.White {
+    background-color: #FFFFFF !important;
+    background-image: none !important;
+    color: #320000 !important;
+}

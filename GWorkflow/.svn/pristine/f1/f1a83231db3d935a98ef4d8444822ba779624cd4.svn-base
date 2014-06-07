@@ -1,0 +1,18 @@
+insert into Status (label, statusType, forNode) values ('New','1','1');
+insert into Status (label, statusType, forNode) values ('Assigned','2','1');
+insert into Status (label, statusType, forNode) values ('Active','0','1');
+insert into Status (label, statusType, forNode) values ('Onhold','0','1');
+insert into Status (label, statusType, forNode) values ('Closed','3','1');
+
+insert into Status (label, statusType, forNode) values ('New','1','2');
+insert into Status (label, statusType, forNode) values ('Assigned','2','2');
+insert into Status (label, statusType, forNode) values ('Active','0','2');
+insert into Status (label, statusType, forNode) values ('Onhold','0','2');
+insert into Status (label, statusType, forNode) values ('Accepted','4','2');
+insert into Status (label, statusType, forNode) values ('Rejected','5','2');
+
+insert into Status (label, statusType, forNode) values ('New' ,'1' ,'3');
+insert into Status (label, statusType, forNode) values ('Assigned','2','3');
+insert into Status (label, statusType, forNode) values ('Active','0','3');
+insert into Status (label, statusType, forNode) values ('Onhold','0','3');
+insert into Status (label, statusType, forNode) values ('Closed','3','3');

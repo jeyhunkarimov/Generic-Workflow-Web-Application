@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:f="http://java.sun.com/jsf/core"      
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      >
+ 
+    <h:head>
+        <title>Workflow Application</title>
+    </h:head>
+    <h:body>
+    	<h:outputStylesheet library="css" name="style.css"  />
+    	<center>
+    	<h:graphicImage url="./images/logo.jpg"></h:graphicImage>
+    	<h:form>
+			<h:panelGrid columns="2">
+				
+				<h:outputLabel value="Email: "></h:outputLabel>
+				<h:inputText value="#{login.email}">
+				</h:inputText>
+				
+				<h:outputLabel value="Password: "></h:outputLabel>
+				<h:inputSecret value="#{login.password}">
+				</h:inputSecret>
+			
+
+	    	   
+			</h:panelGrid>
+			<p:commandButton ajax="false" value="Login" action="#{login.login}">
+	    	</p:commandButton>
+	    	<br/><br/>
+	    	<p:commandLink ajax="false" value="Forget Password? Enter email and click here" action="#{login.forgetPassword}">
+	    	</p:commandLink>	
+    	   
+    	   
+    	   <h5>WorkOrder 0.0.1-TEST</h5>
+    	</h:form>
+    	</center>
+    </h:body>
+</html>

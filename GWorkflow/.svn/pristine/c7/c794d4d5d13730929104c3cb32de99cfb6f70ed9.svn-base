@@ -1,0 +1,313 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+
+<h:head>
+	<title>WorkOrder Application</title>
+</h:head>
+<h:body>
+	<h:outputStylesheet library="css" name="style.css"  />
+	<ui:include src="/pages/common/menu.xhtml" />
+	<h2>WorkOrder Task Listing</h2>
+
+	<br />
+
+	<h:form id="taskListForm">
+	 	<p:growl id="growl" showDetail="true"/>
+		 	<h:panelGrid columns="2" border="2" cellpadding="10" cellspacing="10" columnClasses="columnTask" width="100%">
+				<p:dataTable id="tbl1" var="item"
+					value="#{taskListingManagedBean.assignedToMeTasks}" paginator="true" rowKey="#{item.id}" 
+					rows="10" lazy="true" rowStyleClass="#{item.status.color}"
+					paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+					rowsPerPageTemplate="5,10,15"> 
+					<f:facet name="header">
+						<h:outputText value="Tasks Assigned To Me" />
+					</f:facet>
+		
+					<p:column >
+						<f:facet name="header">
+							<h:outputText value="ID" />
+						</f:facet>
+						<h:commandLink value="#{item.id}" action="#{taskListingManagedBean.selectTask}">
+							<f:param  name="taskId" value="#{item.id}"></f:param>
+						</h:commandLink>
+					</p:column>
+					
+					<p:column >
+						<f:facet name="header">
+							<h:outputText value="Task Name" />
+						</f:facet>
+						<h:outputText value="#{item.node.name}"></h:outputText>
+					</p:column>
+					
+					<p:column >
+						<f:facet name="header">
+							<h:outputText value="Responsible" />
+						</f:facet>
+						<h:outputText value="#{item.responsible.fullName}"></h:outputText>
+					</p:column>
+					
+					<p:column >
+						<f:facet name="header">
+							<h:outputText value="Description" />
+						</f:facet>
+						<h:outputText value="#{item.workorder.summary}"></h:outputText>
+					</p:column>
+					
+					<p:column >
+						<f:facet name="header">
+							<h:outputText value="Status" />
+						</f:facet>
+						<h:outputText value="#{item.status.label}"></h:outputText>
+					</p:column>
+				</p:dataTable>
+				
+				<p:dataTable id="tbl6" var="item"
+					value="#{taskListingManagedBean.assignableToMeTasks}" paginator="true" rowKey="#{item.id}"
+					rows="10" lazy="true" rowStyleClass="#{item.status.color}"
+					paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+					rowsPerPageTemplate="5,10,15"> 
+					<f:facet name="header">
+						<h:outputText value="Tasks Assignable To Me" />
+					</f:facet>
+		
+					<p:column >
+						<f:facet name="header">
+							<h:outputText value="ID" />
+						</f:facet>
+						<h:commandLink value="#{item.id}" action="#{taskListingManagedBean.selectTask}">
+							<f:param  name="taskId" value="#{item.id}"></f:param>
+						</h:commandLink>
+					</p:column>
+					
+					<p:column >
+						<f:facet name="header">
+							<h:outputText value="Task Name" />
+						</f:facet>
+						<h:outputText value="#{item.node.name}"></h:outputText>
+					</p:column>
+					
+					<p:column >
+						<f:facet name="header">
+							<h:outputText value="Responsible" />
+						</f:facet>
+						<h:outputText value="#{item.responsible.fullName}"></h:outputText>
+					</p:column>
+					
+					<p:column >
+						<f:facet name="header">
+							<h:outputText value="Description" />
+						</f:facet>
+						<h:outputText value="#{item.workorder.summary}"></h:outputText>
+					</p:column>
+					
+					<p:column >
+						<f:facet name="header">
+							<h:outputText value="Status" />
+						</f:facet>
+						<h:outputText value="#{item.status.label}"></h:outputText>
+					</p:column>
+				</p:dataTable>
+				
+				<p:dataTable id="tbl3" var="item"
+					value="#{taskListingManagedBean.monitoringByMeTasks}" paginator="true" rowKey="#{item.id}"
+					rows="10" lazy="true" rowStyleClass="#{item.status.color}"
+					paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+					rowsPerPageTemplate="5,10,15"> 
+					<f:facet name="header">
+						<h:outputText value="Tasks Monitoring By Me" />
+					</f:facet>
+		
+					<p:column >
+						<f:facet name="header">
+							<h:outputText value="ID" />
+						</f:facet>
+						<h:commandLink value="#{item.id}" action="#{taskListingManagedBean.selectTask}">
+							<f:param  name="taskId" value="#{item.id}"></f:param>
+						</h:commandLink>
+					</p:column>
+					
+					<p:column >
+						<f:facet name="header">
+							<h:outputText value="Task Name" />
+						</f:facet>
+						<h:outputText value="#{item.node.name}"></h:outputText>
+					</p:column>
+					
+					<p:column >
+						<f:facet name="header">
+							<h:outputText value="Responsible" />
+						</f:facet>
+						<h:outputText value="#{item.responsible.fullName}"></h:outputText>
+					</p:column>
+					
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="Description" />
+						</f:facet>
+						<h:outputText value="#{item.workorder.summary}"></h:outputText>
+					</p:column>
+					
+					<p:column >
+						<f:facet name="header">
+							<h:outputText value="Status" />
+						</f:facet>
+						<h:outputText value="#{item.status.label}"></h:outputText>
+					</p:column>
+				</p:dataTable>
+
+				<p:dataTable id="tbl4" var="item"
+					value="#{taskListingManagedBean.managedByMeTasks}" paginator="true" rowKey="#{item.id}"
+					rows="10" lazy="true" rowStyleClass="#{item.status.color}"
+					paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+					rowsPerPageTemplate="5,10,15"> 
+					<f:facet name="header">
+						<h:outputText value="Tasks Managed By Me" />
+					</f:facet>
+		
+					<p:column >
+						<f:facet name="header">
+							<h:outputText value="ID" />
+						</f:facet>
+						<h:commandLink value="#{item.id}" action="#{taskListingManagedBean.selectTask}">
+							<f:param  name="taskId" value="#{item.id}"></f:param>
+						</h:commandLink>
+					</p:column>
+					
+					<p:column >
+						<f:facet name="header">
+							<h:outputText value="Task Name" />
+						</f:facet>
+						<h:outputText value="#{item.node.name}"></h:outputText>
+					</p:column>
+					
+					<p:column >
+						<f:facet name="header">
+							<h:outputText value="Responsible" />
+						</f:facet>
+						<h:outputText value="#{item.responsible.fullName}"></h:outputText>
+					</p:column>
+					
+					<p:column >
+						<f:facet name="header">
+							<h:outputText value="Description" />
+						</f:facet>
+						<h:outputText value="#{item.workorder.summary}"></h:outputText>
+					</p:column>
+					
+					<p:column >
+						<f:facet name="header">
+							<h:outputText value="Status" />
+						</f:facet>
+						<h:outputText value="#{item.status.label}"></h:outputText>
+					</p:column>
+				</p:dataTable>
+				
+				<p:dataTable id="tbl5" var="item"
+					value="#{taskListingManagedBean.reportedByMeTasks}" paginator="true" rowKey="#{item.id}"
+					rows="10" lazy="true" rowStyleClass="#{item.status.color}"
+					paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+					rowsPerPageTemplate="5,10,15"> 
+					<f:facet name="header">
+						<h:outputText value="Tasks Reported By Me" />
+					</f:facet>
+		
+					<p:column >
+						<f:facet name="header">
+							<h:outputText value="ID" />
+						</f:facet>
+						<h:commandLink value="#{item.id}" action="#{taskListingManagedBean.selectTask}">
+							<f:param  name="taskId" value="#{item.id}"></f:param>
+						</h:commandLink>
+					</p:column>
+					
+					<p:column >
+						<f:facet name="header">
+							<h:outputText value="Task Name" />
+						</f:facet>
+						<h:outputText value="#{item.node.name}"></h:outputText>
+					</p:column>
+					
+					<p:column >
+						<f:facet name="header">
+							<h:outputText value="Responsible" />
+						</f:facet>
+						<h:outputText value="#{item.responsible.fullName}"></h:outputText>
+					</p:column>
+					
+					<p:column >
+						<f:facet name="header">
+							<h:outputText value="Description" />
+						</f:facet>
+						<h:outputText value="#{item.workorder.summary}"></h:outputText>
+					</p:column>
+					
+					<p:column >
+						<f:facet name="header">
+							<h:outputText value="Status" />
+						</f:facet>
+						<h:outputText value="#{item.status.label}"></h:outputText>
+					</p:column>
+				</p:dataTable>
+				
+				<p:dataTable id="tbl2" var="item"
+					value="#{taskListingManagedBean.closedByMeTasks}" paginator="true" rowKey="#{item.id}"
+					rows="10" lazy="true"  rowStyleClass="#{item.status.color}"
+					paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+					rowsPerPageTemplate="5,10,15" > 
+					<f:facet name="header">
+						<h:outputText value="Tasks Closed By Me" />
+					</f:facet>
+		
+					<p:column >
+						<f:facet name="header">
+							<h:outputText value="ID" />
+						</f:facet>
+						<h:commandLink value="#{item.id}" action="#{taskListingManagedBean.selectTask}">
+							<f:param  name="taskId" value="#{item.id}"></f:param>
+						</h:commandLink>
+					</p:column>
+					
+					<p:column >
+						<f:facet name="header">
+							<h:outputText value="Task Name" />
+						</f:facet>
+						<h:outputText value="#{item.node.name}"></h:outputText>
+					</p:column>
+					
+					<p:column >
+						<f:facet name="header">
+							<h:outputText value="Responsible" />
+						</f:facet>
+						<h:outputText value="#{item.responsible.fullName}"></h:outputText>
+					</p:column>
+					
+					<p:column >
+						<f:facet name="header">
+							<h:outputText value="Description" />
+						</f:facet>
+						<h:outputText value="#{item.workorder.summary}"></h:outputText>
+					</p:column>
+					
+					<p:column >
+						<f:facet name="header">
+							<h:outputText value="Status" />
+						</f:facet>
+						<h:outputText value="#{item.status.label}"></h:outputText>
+					</p:column>
+				</p:dataTable>
+			</h:panelGrid>
+   </h:form>
+
+
+	
+
+
+</h:body>
+</html>

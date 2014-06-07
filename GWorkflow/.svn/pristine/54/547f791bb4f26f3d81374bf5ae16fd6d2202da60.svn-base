@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+
+<h:head>
+	<title>Workflow Application</title>
+</h:head>
+<h:body>
+	<h:outputStylesheet library="css" name="style.css" />
+
+	<ui:include src="/pages/common/menu.xhtml" />
+	<h2>Task View</h2>
+	<h:form id="mainForm" enctype="multipart/form-data">
+
+		<p:growl id="growl" showSummary="true" showDetail="false"
+			autoUpdate="true" />
+
+		<pe:timeline id="timelineFirst"
+			value="#{userTimelineManagedBean.modelFirst}" var="task"
+			height="300px" widgetVar="timelineFirstWdgt">
+			<pe:javascript event="rangechange" execute="onrangechange1()" />
+			<p:ajax event="select" listener="#{userTimelineManagedBean.onSelect}" />
+
+			<h:panelGroup layout="block" 
+				style="padding-bottom:5px">
+				<h:outputText value="Task Id - #{task.id}" />
+			</h:panelGroup>
+			<h:panelGroup  style="padding:8px">
+				<h:outputText value="Task status - #{task.status.label}" />
+			</h:panelGroup>
+		</pe:timeline>
+
+ 		<pe:timeline id="timelineSecond"
+			value="#{userTimelineManagedBean.modelSecond}" height="150px"
+			widgetVar="timelineSecondWdgt" style="margin-top:10px;">
+			<pe:javascript event="rangechange" execute="onrangechange2()" />
+		</pe:timeline>
+ 		
+		
+		<h:outputScript id="timelineJS" target="body">
+		$(function() {
+		    onrangechange1();  // to set the range equal initially on page load
+		});
+		    
+		function onrangechange1() {
+		    var range = PF('timelineFirstWdgt').getVisibleRange();
+		    PF('timelineSecondWdgt').setVisibleRange(range.start, range.end);
+		}
+		
+		function onrangechange2() {
+		    var range = PF('timelineSecondWdgt').getVisibleRange();
+		    PF('timelineFirstWdgt').setVisibleRange(range.start, range.end);
+		}
+		</h:outputScript>
+
+
+	</h:form>
+</h:body>
+</html>
