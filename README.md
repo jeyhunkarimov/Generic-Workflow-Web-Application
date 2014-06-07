@@ -15,4 +15,6 @@ Project->GWorkflow->Java Resources->application-context.xml/hibernate.cgf.xml/hi
 
 No need to create tables, messing time with databases.
 
-[[https://github.com/karimovceyhun/Generic-Workflow-Web-Application/blob/master/screenshots/screen1.png]]
+You can look at screenshots , in "screenshots" folder. 
+
+Feel free to contact me for any support: karimovceyhun@gmail.com
