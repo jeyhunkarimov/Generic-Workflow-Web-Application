@@ -17,4 +17,4 @@ No need to create tables, messing time with databases.
 
 You can look at screenshots , in "screenshots" folder. 
 
-Feel free to contact me for any support: karimovceyhun@gmail.com
+Feel free to contact me for any support: je.karimov@gmail.com
